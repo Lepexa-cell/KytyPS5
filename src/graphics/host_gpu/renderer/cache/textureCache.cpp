@@ -950,7 +950,9 @@ void TextureCache::UploadImage(Image& image, const ImageDesc& desc, Buffer& sour
 
 	if (desc.type != BindingType::DepthTarget) {
 		auto plan = BuildColorTransfer(image, desc.type, TransferDirection::Upload);
-		EXIT_NOT_IMPLEMENTED(!plan.valid);
+		if (!plan.valid) {
+			return;
+		}
 		TileManager::Result linear {source.Handle(), source_offset, info.data.size};
 		if (plan.tiled) {
 			linear = m_tiler->Detile(source.Handle(), source_offset, info.data.size, info.data.size,
