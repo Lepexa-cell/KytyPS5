@@ -37,6 +37,7 @@ constexpr FormatInfo kFormatInfo[] = {
     {GpuEnumValue(BufferFormat::k16_16UInt), 4, 0, 4, true, true},
     {GpuEnumValue(BufferFormat::k16_16SInt), 4, 0, 4, false, false},
     {GpuEnumValue(BufferFormat::k16_16Float), 4, 0, 4, true, false},
+    {GpuEnumValue(BufferFormat::k11_11_10UInt), 4, 0, 4, true, true},
     {GpuEnumValue(BufferFormat::k11_11_10Float), 4, 0, 4, true, false},
     {GpuEnumValue(BufferFormat::k10_10_10_2UNorm), 4, 0, 4, true, false},
     {GpuEnumValue(BufferFormat::k10_10_10_2UInt), 4, 0, 4, true, true},
