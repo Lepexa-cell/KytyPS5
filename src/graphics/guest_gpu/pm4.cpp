@@ -110,7 +110,6 @@ void DumpPm4PacketStream(Common::File* file, uint32_t* cmd_buffer, uint32_t star
 	auto* cmd = cmd_buffer + start_dw;
 	auto  dw  = num_dw;
 	while (dw != 0) {
-		EXIT_NOT_IMPLEMENTED(dw < 2);
 		EXIT_NOT_IMPLEMENTED(dw > num_dw);
 
 		auto cmd_id = *cmd++;
