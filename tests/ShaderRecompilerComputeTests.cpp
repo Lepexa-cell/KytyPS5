@@ -8934,6 +8934,32 @@ TestCase ScalarBitfieldPack() {
 	         O::SEndpgm}};
 }
 
+TestCase ScalarBfeI32SignExtendsAndUpdatesScc() {
+	using O = ShaderOpcode;
+
+	std::vector<u32> code;
+	AppendSMovLiteral(&code, 0, 0x80000000u);
+	code.push_back(EncodeSMovB32(1, InlineU32(0)));
+	code.push_back(EncodeSop2(0x28, 2, 0, 255));
+	code.push_back(0x0001001fu); // offset 31, width 1
+	code.push_back(EncodeSop2(0x0a, 3, InlineU32(1), InlineU32(0)));
+	code.push_back(EncodeSop2(0x28, 4, 1, 255));
+	code.push_back(0x0001001fu); // zero result clears SCC
+	code.push_back(EncodeSop2(0x0a, 5, InlineU32(1), InlineU32(0)));
+	AppendStoreSgpr(&code, 2, 0);
+	AppendStoreSgpr(&code, 3, 1);
+	AppendStoreSgpr(&code, 4, 2);
+	AppendStoreSgpr(&code, 5, 3);
+	AppendEnd(&code);
+
+	return {"ScalarBfeI32SignExtendsAndUpdatesScc",
+	        code,
+	        {},
+	        {0xffffffffu, 1, 0, 0},
+	        {O::SMovB32, O::SBfeI32, O::SCselectB32, O::VMovB32, O::BufferStoreDword,
+	         O::SEndpgm}};
+}
+
 TestCase ScalarBrevB32PreservesScc() {
 	using O = ShaderOpcode;
 
@@ -14083,6 +14109,7 @@ std::vector<TestCase> MakeCases() {
 	AddCase(ScalarOrn2SaveexecUsesSourceOrNotExec);
 	AddCase(ScalarGetpcWritesNextInstructionPc);
 	AddCase(ScalarBitfieldPack);
+	AddCase(ScalarBfeI32SignExtendsAndUpdatesScc);
 	AddCase(ScalarBrevB32PreservesScc);
 	AddCase(BitfieldExtractWidthPastEndEdges);
 	AddCase(Scalar64BitOps);
