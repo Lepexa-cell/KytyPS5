@@ -28,6 +28,11 @@ bool GpuResourceManager::HandleFault(PageFaultAccess access, uint64_t fault_vadd
 		{
 			ResourceMutex::FaultScope fault(m_resource_mutex);
 			if (access == PageFaultAccess::Write) {
+				const auto region = m_texture_cache.QueryRegion(fault_vaddr, fault_size);
+				if (region.gpu_image_bytes &&
+				    !m_texture_cache.SynchronizeImageToBuffer(fault_vaddr, fault_size)) {
+					EXIT("GPU-modified image could not be synchronized for a CPU write\n");
+				}
 				m_buffer_cache.InvalidateMemory(fault_vaddr, fault_size);
 				m_texture_cache.InvalidateMemory(fault_vaddr, fault_size);
 			} else {
@@ -64,6 +69,10 @@ bool GpuResourceManager::InvalidateMemory(uint64_t vaddr, uint64_t size) {
 		cp.BeginReadbackTransaction();
 		{
 			ResourceMutex::FaultScope fault(m_resource_mutex);
+			const auto region = m_texture_cache.QueryRegion(vaddr, size);
+			if (region.gpu_image_bytes && !m_texture_cache.SynchronizeImageToBuffer(vaddr, size)) {
+				EXIT("GPU-modified image could not be synchronized for a CPU write\n");
+			}
 			m_buffer_cache.InvalidateMemory(vaddr, size);
 			m_texture_cache.InvalidateMemory(vaddr, size);
 		}

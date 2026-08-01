@@ -99,6 +99,7 @@ enum class Opcode {
 	BitFieldMaskU32,
 	BitFieldMaskU64,
 	BitFieldExtractU32,
+	BitFieldExtractI32,
 	BitFieldExtractU64,
 	BitFieldExtract3U32,
 	BitFieldExtract3I32,
