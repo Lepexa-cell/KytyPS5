@@ -76,11 +76,18 @@ void RenderExecutor::ResolveRenderColorTarget(uint64_t submit_id, RenderCommandB
 		EXIT("unsupported render-target sample configuration: samples=%u fragments=%u\n",
 		     rt.attrib.num_samples, rt.attrib.num_fragments);
 	}
-	const auto view = ResolveTargetViewInfo(
+	auto view = ResolveTargetViewInfo(
 	    rt.view.base_array_slice_index, rt.view.last_array_slice_index, render_target_slice_offset);
 	switch (view.type) {
-		case TargetViewType::Image2D:
-		case TargetViewType::Image2DArray: break;
+		case TargetViewType::Image2D: break;
+		case TargetViewType::Image2DArray: {
+			if (rt.attrib3.dimension == 2) {
+				const uint32_t depth = rt.attrib3.depth + 1u;
+				view.layer_count = std::min(view.layer_count, depth - view.base_layer);
+				view.image_layers = depth;
+			}
+			break;
+		}
 		case TargetViewType::Unsupported:
 			EXIT("invalid render-target view: base=%u last=%u draw_offset=%u\n",
 			     rt.view.base_array_slice_index, rt.view.last_array_slice_index,
