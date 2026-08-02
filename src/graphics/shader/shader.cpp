@@ -1069,8 +1069,9 @@ bool ShaderCompileInfoVS(const HW::VertexShaderInfo& regs, const HW::ShaderRegis
 	spirv = {};
 
 	if (!ShaderGetStaticInputInfoVS(regs, sh, info)) {
-		return false;
-	}
+        LOGF("[UFC5_DEBUG] Failed at ShaderGetStaticInputInfoVS\n");
+        return false;
+    }
 	const auto shader_hash = regs.gs_regs.chksum;
 	const auto program_id  = ShaderGetIdVS(regs, info, false);
 	const auto key =
@@ -1092,8 +1093,9 @@ bool ShaderCompileInfoVS(const HW::VertexShaderInfo& regs, const HW::ShaderRegis
 
 	std::vector<uint32_t> compiled_spirv;
 	if (!ShaderCompileSpirvVS(regs, sh, lane_mask_mode, info, compiled_spirv)) {
-		return false;
-	}
+        LOGF("[UFC5_DEBUG] Failed at ShaderCompileSpirvVS\n");
+        return false;
+    }
 
 	ShaderProgramPermutation permutation {};
 	permutation.spirv   = std::move(compiled_spirv);
