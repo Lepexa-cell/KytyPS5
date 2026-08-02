@@ -1064,45 +1064,57 @@ static std::span<const uint32_t> AddShaderProgramPermutation(const char* stage,
 }
 
 bool ShaderCompileInfoVS(const HW::VertexShaderInfo& regs, const HW::ShaderRegisters& sh,
-                         ShaderLaneMaskMode lane_mask_mode, ShaderVertexInputInfo& info,
-                         std::span<const uint32_t>& spirv) {
-	spirv = {};
+                        ShaderLaneMaskMode lane_mask_mode, ShaderVertexInputInfo& info,
+                        std::span<const uint32_t>& spirv) {
 
-	if (!ShaderGetStaticInputInfoVS(regs, sh, info)) {
-        LOGF("[UFC5_DEBUG] Failed at ShaderGetStaticInputInfoVS\n");
-        return false;
-    }
-	const auto shader_hash = regs.gs_regs.chksum;
-	const auto program_id  = ShaderGetIdVS(regs, info, false);
-	const auto key =
-	    MakeShaderStageProgramKey(ShaderType::Vertex, shader_hash, program_id, lane_mask_mode);
+    printf("\n[UFC5_DEBUG] === ENTER ShaderCompileInfoVS (Hash: 0x%08X) ===\n", regs.gs_regs.chksum);
+    fflush(stdout);
 
-	{
-		std::scoped_lock lock(g_shader_program_cache_mutex);
-		if (auto iter = g_shader_program_cache.find(key); iter != g_shader_program_cache.end()) {
-			for (const auto& permutation: iter->second) {
-				if (TryUseVertexPermutation(*permutation, regs, info, shader_hash)) {
-					spirv = MakeShaderSpirvView(permutation->spirv);
-					LogShaderProgramCacheHit("VS", shader_hash,
-					                         static_cast<uint64_t>(spirv.size()));
-					return true;
-				}
-			}
-		}
-	}
+    spirv = {};
 
-	std::vector<uint32_t> compiled_spirv;
-	if (!ShaderCompileSpirvVS(regs, sh, lane_mask_mode, info, compiled_spirv)) {
-        LOGF("[UFC5_DEBUG] Failed at ShaderCompileSpirvVS\n");
+    if (!ShaderGetStaticInputInfoVS(regs, sh, info)) {
+        printf("[UFC5_DEBUG] FAIL: Failed at ShaderGetStaticInputInfoVS!\n");
+        fflush(stdout);
         return false;
     }
 
-	ShaderProgramPermutation permutation {};
-	permutation.spirv   = std::move(compiled_spirv);
-	permutation.program = info.stage.program;
-	spirv = AddShaderProgramPermutation("VS", shader_hash, key, std::move(permutation));
-	return true;
-}
+    const auto shader_hash = regs.gs_regs.chksum;
+    const auto program_id = ShaderGetIdVS(regs, info, false);
+    const auto key =
+        MakeShaderStageProgramKey(ShaderType::Vertex, shader_hash, program_id, lane_mask_mode);
+
+    {
+        std::scoped_lock lock(g_shader_program_cache_mutex);
+        if (auto iter = g_shader_program_cache.find(key); iter != g_shader_program_cache.end()) {
+            for (const auto& permutation: iter->second) {
+                if (TryUseVertexPermutation(*permutation, regs, info, shader_hash)) {
+                    spirv = MakeShaderSpirvView(permutation->spirv);
+                    LogShaderProgramCacheHit("VS", shader_hash,
+                                             static_cast<uint64_t>(spirv.size()));
+                    printf("[UFC5_DEBUG] SUCCESS: Loaded from cache\n");
+                    fflush(stdout);
+                    return true;
+                }
+            }
+        }
+    }
+
+    std::vector<uint32_t> compiled_spirv;
+    if (!ShaderCompileSpirvVS(regs, sh, lane_mask_mode, info, compiled_spirv)) {
+        printf("[UFC5_DEBUG] FAIL: Failed at ShaderCompileSpirvVS!\n");
+        fflush(stdout);
+        return false;
+    }
+
+    printf("[UFC5_DEBUG] SUCCESS: Compiled SPIR-V (size: %zu)\n", compiled_spirv.size());
+    fflush(stdout);
+
+    ShaderProgramPermutation permutation {};
+    permutation.spirv = std::move(compiled_spirv);
+    permutation.program = info.stage.program;
+    spirv = AddShaderProgramPermutation("VS", shader_hash, key, std::move(permutation));
+    return true;
+ }
 
 bool ShaderCompileInfoPS(const HW::PixelShaderInfo& regs, const HW::ShaderRegisters& sh,
                          ShaderLaneMaskMode lane_mask_mode, const ShaderVertexInputInfo& vs_info,
