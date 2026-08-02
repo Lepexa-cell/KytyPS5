@@ -231,7 +231,7 @@ inline constexpr std::array<DepthFormatPolicy, 2> DEPTH_FORMAT_POLICIES {{
      4,
      vk::Format::eR32Sfloat,
      vk::Format::eD32Sfloat,
-     {vk::Format::eD32SfloatS8Uint, vk::Format::eD32Sfloat, vk::Format::eD24UnormsS8Uint}},
+    {vk::Format::eD32SfloatS8Uint, vk::Format::eD32Sfloat, vk::Format::eD24UnormS8Uint}},
 }};
 
 [[nodiscard]] inline constexpr const DepthFormatPolicy*
