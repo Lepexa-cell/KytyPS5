@@ -58,6 +58,8 @@ static QString GameDirectoryKey(const QString& dir) {
 #endif
 }
 
+static Configuration::LogDirection TextToLogDirection(const QString& text);
+
 ConfigurationEditDialog::ConfigurationEditDialog(Configuration& info, QWidget* parent)
     : QDialog(parent, Qt::WindowCloseButtonHint), m_ui(new Ui::ConfigurationEditDialog),
       m_info(info) {
@@ -76,8 +78,10 @@ ConfigurationEditDialog::ConfigurationEditDialog(Configuration& info, QWidget* p
 	        [this](bool flag) { m_ui->lineEdit_cmd_dump_folder->setEnabled(flag); });
 	connect(m_ui->comboBox_printf_direction, &QComboBox::currentTextChanged, this,
 	        [this](const QString& text) {
-		        auto log = TextToEnum<Configuration::LogDirection>(text);
-		        m_ui->lineEdit_printf_file->setEnabled(log == Configuration::LogDirection::File);
+		        auto log = TextToLogDirection(text);
+		        m_ui->lineEdit_printf_file->setEnabled(
+		            log == Configuration::LogDirection::File ||
+		            log == Configuration::LogDirection::FilePerTest);
 	        });
 
 	layout()->setSizeConstraint(QLayout::SetFixedSize);
@@ -118,6 +122,24 @@ static void ListInit(QComboBox* combo, T value) {
 	combo->setCurrentText(EnumToText(value));
 }
 
+static QString LogDirectionToText(Configuration::LogDirection value) {
+	return value == Configuration::LogDirection::FilePerTest ? QStringLiteral("File per test")
+	                                                         : EnumToText(value);
+}
+
+static Configuration::LogDirection TextToLogDirection(const QString& text) {
+	return text == QStringLiteral("File per test") ? Configuration::LogDirection::FilePerTest
+	                                               : TextToEnum<Configuration::LogDirection>(text);
+}
+
+static void LogDirectionListInit(QComboBox* combo, Configuration::LogDirection value) {
+	auto items = EnumToList<Configuration::LogDirection>();
+	items.replaceInStrings(QStringLiteral("FilePerTest"), QStringLiteral("File per test"));
+	combo->clear();
+	combo->addItems(items);
+	combo->setCurrentText(LogDirectionToText(value));
+}
+
 void ConfigurationEditDialog::Init(const Configuration& info) {
 	ListInit(m_ui->comboBox_screen_resolution, info.screen_resolution);
 	m_ui->spinBox_vblank_frequency->setValue(info.vblank_frequency);
@@ -133,10 +155,11 @@ void ConfigurationEditDialog::Init(const Configuration& info) {
 	m_ui->checkBox_cmd_dump->setChecked(info.command_buffer_dump_enabled);
 	m_ui->lineEdit_cmd_dump_folder->setText(info.command_buffer_dump_folder);
 	m_ui->lineEdit_cmd_dump_folder->setEnabled(info.command_buffer_dump_enabled);
-	ListInit(m_ui->comboBox_printf_direction, info.printf_direction);
+	LogDirectionListInit(m_ui->comboBox_printf_direction, info.printf_direction);
 	m_ui->lineEdit_printf_file->setText(info.printf_output_file);
-	m_ui->lineEdit_printf_file->setEnabled(info.printf_direction ==
-	                                       Configuration::LogDirection::File);
+	m_ui->lineEdit_printf_file->setEnabled(
+	    info.printf_direction == Configuration::LogDirection::File ||
+	    info.printf_direction == Configuration::LogDirection::FilePerTest);
 	ListInit(m_ui->comboBox_profiler_direction, info.profiler_direction);
 }
 
@@ -253,8 +276,7 @@ static void UpdateInfo(Configuration& info, Ui::ConfigurationEditDialog& ui) {
 	info.shader_log_folder           = ui.lineEdit_shader_log_folder->text();
 	info.command_buffer_dump_enabled = ui.checkBox_cmd_dump->isChecked();
 	info.command_buffer_dump_folder  = ui.lineEdit_cmd_dump_folder->text();
-	info.printf_direction =
-	    TextToEnum<Configuration::LogDirection>(ui.comboBox_printf_direction->currentText());
+	info.printf_direction   = TextToLogDirection(ui.comboBox_printf_direction->currentText());
 	info.printf_output_file = ui.lineEdit_printf_file->text();
 	info.profiler_direction =
 	    TextToEnum<Configuration::ProfilerDirection>(ui.comboBox_profiler_direction->currentText());
