@@ -364,16 +364,19 @@ if (!format_compatible && normalized.format != vk::Format::eUndefined) {
 	    IsComponentSwizzle(normalized.mapping.r) && IsComponentSwizzle(normalized.mapping.g) &&
 	    IsComponentSwizzle(normalized.mapping.b) && IsComponentSwizzle(normalized.mapping.a);
 	if (image.image == nullptr || !format_compatible || !ranges_valid || !mapping_valid ||
-	    !IsValidViewType(image, normalized) || !IsValidAspect(image, normalized.aspect)) {
-		EXIT("invalid image view: image_format=%d view_format=%d type=%d aspect=0x%x "
-		     "mip=%u+%u layer=%u+%u usage=0x%x image_levels=%u image_layers=%u\n",
-		     static_cast<int>(image.format), static_cast<int>(normalized.format),
-		     static_cast<int>(normalized.type),
-		     static_cast<vk::ImageAspectFlags::MaskType>(normalized.aspect), normalized.base_level,
-		     normalized.level_count, normalized.base_layer, normalized.layer_count,
-		     static_cast<vk::ImageUsageFlags::MaskType>(normalized.usage), image.mip_levels,
-		     image.layers);
-	}
+        !IsValidViewType(image, normalized) || !IsValidAspect(image, normalized.aspect)) {
+        LOGF("invalid image view: image_format=%d view_format=%d type=%d aspect=0x%x "
+             "mip=%u+%u layer=%u+%u usage=0x%x image_levels=%u image_layers=%u\n",
+             static_cast<int>(image.format), static_cast<int>(normalized.format),
+             static_cast<int>(normalized.type),
+             static_cast<vk::ImageAspectFlags::MaskType>(normalized.aspect), normalized.base_level,
+             normalized.level_count, normalized.base_layer, normalized.layer_count,
+             static_cast<vk::ImageUsageFlags::MaskType>(normalized.usage), image.mip_levels,
+             image.layers);
+        if (image.image == nullptr) {
+            return vk::ImageView{};
+        }
+    }
 
 	std::lock_guard lock(views.mutex);
 	for (const auto& cached: views.views) {
