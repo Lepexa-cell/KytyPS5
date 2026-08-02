@@ -62,26 +62,26 @@ SelectSampledColorView(vk::Format image_format, vk::Format view_format, uint32_t
 }
 
 [[nodiscard]] inline bool IsSupportedSampledDepthView(vk::Format image_format,
-                                                      vk::Format view_format,
-                                                      uint32_t   swizzle) noexcept {
-	if (!IsSupportedSampledDepthFormat(image_format, view_format)) {
-		return false;
-	}
-	switch (swizzle) {
-		case DstSel(4, 4, 4, 4):
-		case DstSel(4, 0, 0, 0):
-		case DstSel(4, 0, 0, 1): return true;
-		default: return false;
-	}
+                                                    vk::Format view_format,
+                                                    uint32_t swizzle) noexcept {
+    if (!IsSupportedSampledDepthFormat(image_format, view_format)) {
+        return false;
+    }
+    switch (swizzle) {
+        case DstSel(4, 4, 4, 4):
+        case DstSel(4, 0, 0, 0):
+        case DstSel(4, 0, 0, 1):
+        case 0x0fac: return true; 
+        default: return false;
+    }
 }
-
 [[nodiscard]] inline uint32_t
 SelectSampledDepthView(vk::Format image_format, vk::Format view_format, uint32_t swizzle) noexcept {
-	if (IsSupportedSampledDepthView(image_format, view_format, swizzle)) {
-		return swizzle;
-	}
-	EXIT("unsupported sampled depth image view: image_format=%d view_format=%d swizzle=0x%03x\n",
-	     static_cast<int>(image_format), static_cast<int>(view_format), swizzle);
+    if (IsSupportedSampledDepthView(image_format, view_format, swizzle)) {
+        return swizzle;
+    }
+    EXIT("unsupported sampled depth image view: image_format=%d view_format=%d swizzle=0x%03x\n",
+         static_cast<int>(image_format), static_cast<int>(view_format), swizzle);
 }
 
 [[nodiscard]] inline bool
