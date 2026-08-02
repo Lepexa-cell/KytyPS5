@@ -35,6 +35,7 @@ constexpr FormatMapping kFormatMappings[] = {
     {Prospero::BufferFormat::k16_16UInt, vk::Format::eR16G16Uint},
     {Prospero::BufferFormat::k16_16SInt, vk::Format::eR16G16Sint},
     {Prospero::BufferFormat::k16_16Float, vk::Format::eR16G16Sfloat},
+    {Prospero::BufferFormat::k11_11_10UInt, vk::Format::eR32Uint},
     {Prospero::BufferFormat::k11_11_10Float, vk::Format::eB10G11R11UfloatPack32},
     {Prospero::BufferFormat::k10_10_10_2UNorm, vk::Format::eA2B10G10R10UnormPack32},
     {Prospero::BufferFormat::k10_10_10_2UInt, vk::Format::eA2B10G10R10UintPack32},

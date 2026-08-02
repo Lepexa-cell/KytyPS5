@@ -2237,7 +2237,6 @@ int32_t KYTY_SYSV_ABI KernelMapNamedFlexibleMemory(void** addr_in_out, size_t le
 		    std::all_of(reserved_ranges.begin(), reserved_ranges.end(), [](const auto& range) {
 			    return range.type == VirtualRangeType::Reserved;
 		    })) {
-			UnmapGpuRange(in_addr, len);
 			consumed_range = reserved_ranges.front();
 			if (g_virtual_ranges->ConsumeReservedSpan(in_addr, len)) {
 				consumed_reservation = true;
@@ -2930,7 +2929,6 @@ int KYTY_SYSV_ABI KernelMapDirectMemory(void** addr, size_t len, int prot, int f
 		    std::all_of(reserved_ranges.begin(), reserved_ranges.end(), [](const auto& range) {
 			    return range.type == VirtualRangeType::Reserved;
 		    })) {
-			UnmapGpuRange(in_addr, len);
 			consumed_range = reserved_ranges.front();
 			if (g_virtual_ranges->ConsumeReservedSpan(in_addr, len)) {
 				consumed_reservation = true;
@@ -2953,7 +2951,6 @@ int KYTY_SYSV_ABI KernelMapDirectMemory(void** addr, size_t len, int prot, int f
 		    std::all_of(reserved_ranges.begin(), reserved_ranges.end(), [](const auto& range) {
 			    return range.type == VirtualRangeType::Reserved;
 		    })) {
-			UnmapGpuRange(in_addr, len);
 			consumed_range = reserved_ranges.front();
 			if (g_virtual_ranges->ConsumeReservedSpan(in_addr, len)) {
 				consumed_reservation = true;
