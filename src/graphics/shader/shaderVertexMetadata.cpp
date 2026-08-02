@@ -61,13 +61,10 @@ bool ShaderReadVertexMetadata(const ShaderMappedData& data, uint32_t max_user_sg
 		metadata = next;
 		return true;
 	}
-	if (next.vertex_buffer_reg < 0 || next.vertex_attrib_reg < 0) {
-		return Fail(error, "vertex buffer and attribute tables must be supplied together");
-	}
-	if (static_cast<uint32_t>(next.vertex_buffer_reg) + 1u >= max_user_sgprs ||
-	    static_cast<uint32_t>(next.vertex_attrib_reg) + 1u >= max_user_sgprs) {
-		return Fail(error, "vertex table pointer exceeds the user-SGPR domain");
-	}
+    if ((next.vertex_buffer_reg >= 0 && static_cast<uint32_t>(next.vertex_buffer_reg) + 1u >= max_user_sgprs) ||
+    (next.vertex_attrib_reg >= 0 && static_cast<uint32_t>(next.vertex_attrib_reg) + 1u >= max_user_sgprs)) {
+    return Fail(error, "vertex table pointer exceeds the user-SGPR domain");
+    }
 	if (data.num_input_semantics == 0 ||
 	    data.num_input_semantics > ShaderVertexInputInfo::RES_MAX) {
 		return Fail(error, "vertex semantic count is outside the supported domain");

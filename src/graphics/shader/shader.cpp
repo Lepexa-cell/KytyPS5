@@ -764,20 +764,22 @@ static bool ShaderGetStaticInputInfoVS(const HW::VertexShaderInfo& regs,
         return false;
 	}
 
-	if (metadata.vertex_buffer_reg >= 0) {
+	if (metadata.vertex_buffer_reg >= 0 || metadata.vertex_attrib_reg >= 0) {
 		info.fetch_external   = false;
 		info.fetch_embedded   = true;
 		info.fetch_attrib_reg = metadata.vertex_attrib_reg;
 		info.fetch_buffer_reg = metadata.vertex_buffer_reg;
 
-		const auto* attrib = reinterpret_cast<const uint32_t*>(
-		    static_cast<uint64_t>(user_sgpr.value[metadata.vertex_attrib_reg]) |
-		    (static_cast<uint64_t>(user_sgpr.value[metadata.vertex_attrib_reg + 1]) << 32u));
-		const auto* buffer = reinterpret_cast<const uint32_t*>(
-		    static_cast<uint64_t>(user_sgpr.value[metadata.vertex_buffer_reg]) |
-		    (static_cast<uint64_t>(user_sgpr.value[metadata.vertex_buffer_reg + 1]) << 32u));
+		const auto* attrib = (metadata.vertex_attrib_reg >= 0) ? reinterpret_cast<const uint32_t*>(
+    static_cast<uint64_t>(user_sgpr.value[metadata.vertex_attrib_reg]) |
+    (static_cast<uint64_t>(user_sgpr.value[metadata.vertex_attrib_reg + 1]) << 32u)) : nullptr;
 
-		if (attrib == nullptr || buffer == nullptr) {
+    const auto* buffer = (metadata.vertex_buffer_reg >= 0) ? reinterpret_cast<const uint32_t*>(
+    static_cast<uint64_t>(user_sgpr.value[metadata.vertex_buffer_reg]) |
+    (static_cast<uint64_t>(user_sgpr.value[metadata.vertex_buffer_reg + 1]) << 32u)) : nullptr;
+
+		if ((metadata.vertex_attrib_reg >= 0 && attrib == nullptr) ||
+        (metadata.vertex_buffer_reg >= 0 && buffer == nullptr)) {
         printf("[INPUT_INFO_FAIL] Null vertex table pointer! (attrib: %p, buffer: %p)\n", attrib, buffer);
         fflush(stdout);
         return false;
