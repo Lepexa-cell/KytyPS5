@@ -179,7 +179,9 @@ uint32_t KYTY_SYSV_ABI NetNtohl(uint32_t net32) {
 uint16_t KYTY_SYSV_ABI NetNtohs(uint16_t net16) {
 	return NetHtons(net16);
 }
-
+static int KYTY_SYSV_ABI NetGenericStub() {
+    return 0;
+}
 LIB_DEFINE(InitNet_1_Net) {
 	LIB_OBJECT("ZRAJo-A-ukc", &LibNet::g_in6addr_any);
 
@@ -207,6 +209,8 @@ LIB_DEFINE(InitNet_1_Net) {
 	LIB_FUNC("2mKX2Spso7I", LibNet::NetSetsockopt);
 	LIB_FUNC("9T2pDF2Ryqg", LibNet::NetHtonl);
 	LIB_FUNC("iWQWrwiSt8A", LibNet::NetHtons);
+	LIB_FUNC("Azqo8ha7js4", LibNet::NetGenericStub);
+	LIB_FUNC("WJLYH5SuMAWI", LibNet::NetGenericStub);
 	LIB_FUNC("pQGpHYopAIY", LibNet::NetNtohl);
 	LIB_FUNC("Rbvt+5Y2iEw", LibNet::NetNtohs);
 }
@@ -606,7 +610,9 @@ static int KYTY_SYSV_ABI HttpUriBuild(char* out, size_t* require, size_t prepare
 
 	return 0;
 }
-
+static int KYTY_SYSV_ABI HttpGenericStub() {
+    return 0;
+}
 LIB_DEFINE(InitNet_1_Http) {
 	LIB_FUNC("A9cVMUtEp4Y", Http::HttpInit);
 	LIB_FUNC("Ik-KpLTlf7Q", Http::HttpTerm);
@@ -639,6 +645,14 @@ LIB_DEFINE(InitNet_1_Http) {
 	LIB_FUNC("K1d1LqZRQHQ", Http::HttpSetResolveRetry);
 	LIB_FUNC("0S9tTH0uqTU", Http::HttpSetConnectTimeOut);
 	LIB_FUNC("xegFfZKBVlw", Http::HttpSetSendTimeOut);
+	LIB_FUNC("h9wmFZX4i-4", LibHttp::HttpGenericStub);
+	LIB_FUNC("Wh6bS2HQKBo", LibHttp::HttpGenericStub);
+	LIB_FUNC("i9mhafzkEi8", LibHttp::HttpGenericStub);
+	LIB_FUNC("zXqcE0Fizz0", LibHttp::HttpGenericStub);
+	LIB_FUNC("DK+GaXCNT0w", LibHttp::HttpGenericStub);
+	LIB_FUNC("rGNm+FjIXKk", LibHttp::HttpGenericStub);
+	LIB_FUNC("JBN6N-EY+3M", LibHttp::HttpGenericStub);
+	LIB_FUNC("0onIrKx9NIE", LibHttp::HttpGenericStub);
 	LIB_FUNC("yigr4V0-HTM", Http::HttpSetRecvTimeOut);
 	LIB_FUNC("T-mGo9f3Pu4", Http::HttpSetAutoRedirect);
 	LIB_FUNC("qFg2SuyTJJY", Http::HttpSetAuthEnabled);
@@ -1404,7 +1418,9 @@ namespace LibNpManager {
 LIB_VERSION("NpManager", 1, "NpManager", 1, 1);
 
 namespace NpManager = Network::NpManager;
-
+static int KYTY_SYSV_ABI NpGenericStub() {
+    return 0;
+}
 LIB_DEFINE(InitNet_1_NpManager) {
 	LIB_FUNC("3Zl8BePTh9Y", NpManager::NpCheckCallback);
 	LIB_FUNC("Ec63y59l9tw", NpManager::NpSetNpTitleId);
@@ -1430,6 +1446,7 @@ LIB_DEFINE(InitNet_1_NpManager) {
 	LIB_FUNC("uqcPJLWL08M", NpManager::NpPollAsync);
 	LIB_FUNC("O80NrhUOPGY", NpManager::NpCheckPremium);
 	LIB_FUNC("eQH7nWPcAgc", NpManager::NpGetState);
+	LIB_FUNC("3Tcz5bNCFZQ", LibNpManager::NpGenericStub);
 	LIB_FUNC("e-ZuhGEoeC4", NpManager::NpGetNpReachabilityState);
 	LIB_FUNC("Oad3rvY-NJQ", NpManager::NpHasSignedUp);
 }
