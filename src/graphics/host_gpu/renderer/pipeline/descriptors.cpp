@@ -323,23 +323,24 @@ static void ValidateDepthTargetBinding(const ShaderRecompiler::IR::ImageResource
 	const auto descriptor_pitch =
 	    TileGetTexturePitch(descriptor.Format(), static_cast<uint32_t>(descriptor.Width5()) + 1u, 1,
 	                        descriptor.TileMode());
-	EXIT("unsupported sampled depth target: resource=%d descriptor=%d encoding=%d format=%d "
-	     "kind=%u dimension=%u mip_mode=%u read=%d written=%d atomic=%d compare=%d "
-	     "guest_format=%u swizzle=0x%03x image_format=%d view_format=%d image_layers=%u "
-	     "descriptor_type=%u base_array=%u depth=%u descriptor_pitch=%u target_pitch=%u "
-	     "addr=0x%016" PRIx64 " size=0x%016" PRIx64
-	     " dwords=%08x,%08x,%08x,%08x,%08x,%08x,%08x,%08x\n",
-	     resource_ok, descriptor_ok, encoding_ok, format_ok, static_cast<uint32_t>(resource.kind),
-	     static_cast<uint32_t>(resource.dimension), static_cast<uint32_t>(resource.mip_mode),
-	     resource.read, resource.written, resource.atomic, resource.depth_compare,
-	     descriptor.Format(), descriptor.DstSelXYZW(),
-	     image == nullptr ? static_cast<int>(vk::Format::eUndefined)
-	                      : static_cast<int>(image->info.pixel_format),
-	     static_cast<int>(view_format), image == nullptr ? 0u : image->info.resources.layers,
-	     descriptor.Type(), descriptor.BaseArray5(), descriptor.Depth(), descriptor_pitch,
-	     image == nullptr ? 0u : image->info.pitch, descriptor.Base40(), size, descriptor.fields[0],
-	     descriptor.fields[1], descriptor.fields[2], descriptor.fields[3], descriptor.fields[4],
-	     descriptor.fields[5], descriptor.fields[6], descriptor.fields[7]);
+	LOGF("unsupported sampled depth target: resource=%d descriptor=%d encoding=%d format=%d "
+     "kind=%u dimension=%u mip_mode=%u read=%d written=%d atomic=%d compare=%d "
+     "guest_format=%u swizzle=0x%03x image_format=%d view_format=%d image_layers=%u "
+     "descriptor_type=%u base_array=%u depth=%u descriptor_pitch=%u target_pitch=%u "
+     "addr=0x%016" PRIx64 " size=0x%016" PRIx64
+     " dwords=%08x,%08x,%08x,%08x,%08x,%08x,%08x,%08x\n",
+     resource_ok, descriptor_ok, encoding_ok, format_ok, static_cast<uint32_t>(resource.kind),
+     static_cast<uint32_t>(resource.dimension), static_cast<uint32_t>(resource.mip_mode),
+     resource.read, resource.written, resource.atomic, resource.depth_compare,
+     descriptor.Format(), descriptor.DstSelXYZW(),
+     image == nullptr ? static_cast<int>(vk::Format::eUndefined)
+                      : static_cast<int>(image->info.pixel_format),
+     static_cast<int>(view_format), image == nullptr ? 0u : image->info.resources.layers,
+     descriptor.Type(), descriptor.BaseArray5(), descriptor.Depth(), descriptor_pitch,
+     image == nullptr ? 0u : image->info.pitch, descriptor.Base40(), size, descriptor.fields[0],
+     descriptor.fields[1], descriptor.fields[2], descriptor.fields[3], descriptor.fields[4],
+     descriptor.fields[5], descriptor.fields[6], descriptor.fields[7]);
+    return;
 }
 
 static bool IsSupportedStorageTextureDescriptor(const ShaderRecompiler::IR::ImageResource& resource,
