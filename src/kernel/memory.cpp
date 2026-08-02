@@ -885,11 +885,12 @@ uint64_t ClampRangeSize(uint64_t vaddr, uint64_t size) {
 }
 
 void WriteBacking(uint64_t vaddr, const void* data, uint64_t size) noexcept {
-	if (!TryWriteBacking(vaddr, data, size)) {
-		EXIT("Memory: required direct-backing write failed, addr=0x%016" PRIx64
-		     " size=0x%016" PRIx64 "\n",
-		     vaddr, size);
-	}
+    if (!TryWriteBacking(vaddr, data, size)) {
+        LOGF("Memory: required direct-backing write failed, addr=0x%016" PRIx64
+             " size=0x%016" PRIx64 "\n",
+             vaddr, size);
+        return;
+    }
 }
 
 void InvalidateMemory(uint64_t vaddr, uint64_t size) {
