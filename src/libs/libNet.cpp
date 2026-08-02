@@ -214,7 +214,10 @@ LIB_DEFINE(InitNet_1_Net) {
 	LIB_FUNC("pQGpHYopAIY", LibNet::NetNtohl);
 	LIB_FUNC("Rbvt+5Y2iEw", LibNet::NetNtohs);
 }
-
+LIB_DEFINE(InitNet_1_1_Net) {
+    LIB_FUNC("AzqoBha7js4", LibNet::NetGenericStub);
+    LIB_FUNC("kJLYH5uMAWI", LibNet::NetGenericStub);
+}
 } // namespace LibNet
 
 namespace LibSsl {

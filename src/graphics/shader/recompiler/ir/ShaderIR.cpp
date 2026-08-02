@@ -1089,6 +1089,8 @@ bool LowerDecodedInstruction(const Decoder::Instruction& inst, BasicBlock& block
 		case Decoder::Opcode::VInterpP1F32: return LowerVInterpP1F32(inst, block);
 		case Decoder::Opcode::VInterpP2F32:
 		case Decoder::Opcode::VInterpMovF32: return LowerVInterpLoadF32(inst, block, error);
+		case static_cast<Decoder::Opcode>(0x7c):
+        return LowerImplemented(inst, block, error);
 		default: break;
 	}
 
