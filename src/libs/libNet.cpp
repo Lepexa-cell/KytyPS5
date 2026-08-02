@@ -1446,7 +1446,7 @@ LIB_DEFINE(InitNet_1_NpManager) {
 	LIB_FUNC("uqcPJLWL08M", NpManager::NpPollAsync);
 	LIB_FUNC("O80NrhUOPGY", NpManager::NpCheckPremium);
 	LIB_FUNC("eQH7nWPcAgc", NpManager::NpGetState);
-	LIB_FUNC("3Tcz5bNCFZQ", LibNpManager::NpGenericStub);
+	LIB_FUNC("3Tcz5bNCFZQ", LibNpManager::NpGenericStub);src/graphics/shader/shader.cpp
 	LIB_FUNC("e-ZuhGEoeC4", NpManager::NpGetNpReachabilityState);
 	LIB_FUNC("Oad3rvY-NJQ", NpManager::NpHasSignedUp);
 }
