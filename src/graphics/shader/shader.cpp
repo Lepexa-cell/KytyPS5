@@ -745,10 +745,10 @@ static bool ShaderGetStaticInputInfoVS(const HW::VertexShaderInfo& regs,
 	auto                    user_sgpr_num = regs.gs_regs.rsrc2.user_sgpr;
 	ShaderMappedData        data;
 	if (!ShaderGetMappedData(shader_addr, data)) {
-		LOGF("ShaderGetInputInfoVS(): shader=0x%016" PRIx64 " is missing from ShaderMap\n",
-		     shader_addr);
-		return false;
-	}
+        printf("[INPUT_INFO_FAIL] Missing from ShaderMap (addr: 0x%llx)\n", (unsigned long long)shader_addr);
+        fflush(stdout);
+        return false;
+    }
 
 	if (data.user_data == nullptr) {
 		LOGF("ShaderGetInputInfoVS(): no AGC user data for shader=0x%016" PRIx64 " es=0x%016" PRIx64
@@ -759,9 +759,9 @@ static bool ShaderGetStaticInputInfoVS(const HW::VertexShaderInfo& regs,
 	ShaderVertexMetadata metadata;
 	std::string          metadata_error;
 	if (!ShaderReadVertexMetadata(data, HW::UserSgprInfo::SGPRS_MAX, metadata, &metadata_error)) {
-		LOGF("ShaderGetInputInfoVS(): invalid AGC metadata shader=0x%016" PRIx64 ": %s\n",
-		     shader_addr, metadata_error.c_str());
-		return false;
+        printf("[INPUT_INFO_FAIL] Invalid AGC metadata: %s\n", metadata_error.c_str());
+        fflush(stdout);
+        return false;
 	}
 
 	if (metadata.vertex_buffer_reg >= 0) {
@@ -778,10 +778,10 @@ static bool ShaderGetStaticInputInfoVS(const HW::VertexShaderInfo& regs,
 		    (static_cast<uint64_t>(user_sgpr.value[metadata.vertex_buffer_reg + 1]) << 32u));
 
 		if (attrib == nullptr || buffer == nullptr) {
-			LOGF("ShaderGetInputInfoVS(): null vertex table pointer shader=0x%016" PRIx64 "\n",
-			     shader_addr);
-			return false;
-		}
+        printf("[INPUT_INFO_FAIL] Null vertex table pointer! (attrib: %p, buffer: %p)\n", attrib, buffer);
+        fflush(stdout);
+        return false;
+        }  
 		ShaderApplyAttribSemantics(info, metadata.input_semantics.data(),
 		                           metadata.input_semantics_count, attrib, buffer);
 		ShaderDetectBuffers(info);
