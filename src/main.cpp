@@ -64,6 +64,7 @@ static void PrintUsage() {
 	::printf(
 	    "  --readback-linear-images <true|false> Read back writable linear images on submit.\n");
 	::printf("  --rd                                 Enable RenderDoc capture.\n");
+	::printf("  --keymap <Pad=Key;...>               Keyboard/mouse -> DualSense mapping.\n");
 }
 
 static bool NextArg(int argc, char* argv[], int& index, std::string& out) {
@@ -230,6 +231,8 @@ static bool ParseArgs(int argc, char* argv[], RunOptions& options, bool& show_he
 				::printf("invalid boolean for %s: %s\n", arg.c_str(), value.c_str());
 				return false;
 			}
+		} else if (arg == "--keymap") {
+			options.config.keymap = value;
 		} else {
 			::printf("unknown option: %s\n", arg.c_str());
 			return false;

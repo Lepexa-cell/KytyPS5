@@ -5,6 +5,8 @@
 #include "common/subsystems.h"
 
 #include <filesystem>
+#include <string>
+#include <unordered_map>
 
 namespace Config {
 
@@ -37,6 +39,10 @@ struct ConfigOptions {
 	bool                   renderdoc_enabled           = false;
 	bool                   ngg_rectlist_draw_enabled   = true;
 	bool                   readback_linear_images      = false;
+
+	// Keyboard/mouse -> DualSense pad mapping, "PadButton=Key;PadButton=Key;..."
+	// expressed using SDL key names (matching SDLK_* via SDL_GetKeyFromName).
+	std::string            keymap;
 };
 
 void Load(const ConfigOptions& cfg);
@@ -66,6 +72,16 @@ bool SpirvDebugPrintfEnabled();
 bool RenderDocEnabled();
 bool NggRectlistDrawEnabled();
 bool ReadbackLinearImagesEnabled();
+
+// Keyboard/mouse mapping (parsed from --keymap).
+const std::unordered_map<std::string, std::string>& GetKeymap();
+
+// Returns true when a --keymap argument was supplied at launch. When active,
+// the host-keyboard fallback to the built-in default layout is disabled so
+// that only keys the user explicitly bound trigger DualSense buttons; this
+// avoids a freshly remapped key (e.g. Cross -> X) leaving the old default
+// (e.g. S -> Down) still firing alongside it.
+bool KeymapIsActive();
 
 } // namespace Config
 
