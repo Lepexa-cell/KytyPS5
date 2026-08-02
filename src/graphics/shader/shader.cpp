@@ -606,72 +606,85 @@ static uint32_t VertexAttribFormatToBufferFormat(uint32_t format) {
 }
 
 static void ShaderApplyAttribSemantics(ShaderVertexInputInfo& info,
-                                       const ShaderSemantic*  input_semantics,
+                                       const ShaderSemantic* input_semantics,
                                        uint32_t num_input_semantics, const uint32_t* attrib,
                                        const uint32_t* buffer) {
-	KYTY_PROFILER_FUNCTION();
+    KYTY_PROFILER_FUNCTION();
 
-	EXIT_IF(attrib == nullptr || buffer == nullptr);
+    EXIT_IF(attrib == nullptr && buffer == nullptr);
 
-	for (uint32_t i = 0; i < num_input_semantics; i++) {
-		const auto& in = input_semantics[i];
+    for (uint32_t i = 0; i < num_input_semantics; i++) {
+        const auto& in = input_semantics[i];
 
-		EXIT_NOT_IMPLEMENTED(in.static_vb_index == 1 || in.static_attribute == 1);
+        EXIT_NOT_IMPLEMENTED(in.static_vb_index == 1 || in.static_attribute == 1);
 
-		uint32_t reg  = in.hardware_mapping;
-		uint32_t size = in.size_in_elements;
+        uint32_t reg = in.hardware_mapping;
+        uint32_t size = in.size_in_elements;
 
-		LOGF("reg = %u, size = %u, va[%u] = 0x%08" PRIx32 "\n", reg, size, i, attrib[in.semantic]);
+        uint32_t index = 0;
+        uint32_t format = 0;
+        uint32_t offset = 0;
+        uint32_t fetch_index = 0;
 
-		size_t   index       = attrib[in.semantic] & 0x1fu;
-		uint32_t format      = (attrib[in.semantic] >> 5u) & 0x1ffu;
-		uint32_t offset      = (attrib[in.semantic] >> 14u) & 0xfffu;
-		uint32_t fetch_index = (attrib[in.semantic] >> 26u) & 0x1u;
+        if (attrib != nullptr) {
+            LOGF("reg = %u, size = %u, va[%u] = 0x%08" PRIX32 "\n", reg, size, i, attrib[in.semantic]);
+            index       = attrib[in.semantic] & 0x1fu;
+            format      = (attrib[in.semantic] >> 5u) & 0x1ffu;
+            offset      = (attrib[in.semantic] >> 14u) & 0xffffu;
+            fetch_index = (attrib[in.semantic] >> 26u) & 0x1u;
+        } else {
+            index = in.semantic;
+        }
 
-		if (fetch_index != 0) {
-			static std::atomic<uint64_t> log_count = 0;
-			auto                         log_id    = log_count.fetch_add(1);
-			if (log_id < 64) {
-				LOGF("\t temporary: PS5 vertex attrib semantic %u uses fetch index %u, buffer "
-				     "index %zu\n",
-				     static_cast<uint32_t>(in.semantic), fetch_index, index);
-			}
-		}
+        if (fetch_index != 0) {
+            static std::atomic<uint64_t> log_count = 0;
+            auto log_id = log_count.fetch_add(1);
+            if (log_id < 64) {
+                LOGF("\t temporary: PS5 vertex attrib semantic %u uses fetch index %u, buffer "
+                     "index %zu\n",
+                     static_cast<uint32_t>(in.semantic), fetch_index, index);
+            }
+        }
 
-		EXIT_NOT_IMPLEMENTED(index >= ShaderVertexInputInfo::RES_MAX);
+        EXIT_NOT_IMPLEMENTED(index >= ShaderVertexInputInfo::RES_MAX);
 
-		const auto* sharp = &buffer[index * 4];
+        static constexpr uint32_t zero_buffer[4] = {0, 0, 0, 0};
+        const auto* sharp = (buffer != nullptr) ? &buffer[index * 4] : zero_buffer;
 
-		EXIT_NOT_IMPLEMENTED(info.resources_num >= ShaderVertexInputInfo::RES_MAX);
+        EXIT_NOT_IMPLEMENTED(info.resources_num >= ShaderVertexInputInfo::RES_MAX);
 
-		auto& r           = info.resources[info.resources_num];
-		auto& rd          = info.resources_dst[info.resources_num];
-		rd.register_start = static_cast<int>(reg);
-		rd.registers_num  = static_cast<int>(size);
-		rd.attr_id        = static_cast<int>(in.semantic);
-		rd.fetch_index    = fetch_index;
-		r.fields[0]       = sharp[0];
-		r.fields[1]       = sharp[1];
-		r.fields[2]       = sharp[2];
-		r.fields[3]       = sharp[3];
-		if (format != 0) {
-			auto                         buffer_format = VertexAttribFormatToBufferFormat(format);
-			static std::atomic<uint64_t> log_count     = 0;
-			auto                         log_id        = log_count.fetch_add(1);
-			if (log_id < 64) {
-				LOGF("\t temporary: PS5 vertex attrib semantic %u uses attrib format %u -> buffer "
-				     "format %u, offset %u, buffer index %zu\n",
-				     static_cast<uint32_t>(in.semantic), format, buffer_format, offset, index);
-			}
-			r.fields[3] = (r.fields[3] & ~((0x7fu << 12u) | 0xfffu)) |
-			              ((buffer_format & 0x7fu) << 12u) | DstSel(4, 5, 6, 7);
-		}
-		if (offset != 0) {
-			r.UpdateAddress48(r.Base48() + offset);
-		}
+        auto& r  = info.resources[info.resources_num];
+        auto& rd = info.resources_dst[info.resources_num];
 
-		info.resources_num++;
-	}
+        rd.register_start = static_cast<int>(reg);
+        rd.registers_num  = static_cast<int>(size);
+        rd.attr_id         = static_cast<int>(in.semantic);
+        rd.fetch_index     = fetch_index;
+
+        r.fields[0] = sharp[0];
+        r.fields[1] = sharp[1];
+        r.fields[2] = sharp[2];
+        r.fields[3] = sharp[3];
+
+        if (format != 0) {
+            auto buffer_format = VertexAttribFormatToBufferFormat(format);
+            static std::atomic<uint64_t> log_count = 0;
+            auto log_id = log_count.fetch_add(1);
+            if (log_id < 64) {
+                LOGF("\t temporary: PS5 vertex attrib semantic %u uses attrib format %u -> buffer "
+                     "format %u, offset %u, buffer index %zu\n",
+                     static_cast<uint32_t>(in.semantic), format, buffer_format, offset, index);
+            }
+            r.fields[3] = (r.fields[3] & ~((0x7fu << 12u) | 0xfffu)) |
+                          ((buffer_format & 0x7fu) << 12u) | DstSel(4, 5, 6, 7);
+        }
+
+        if (offset != 0) {
+            r.UpdateAddress48(r.Base48() + offset);
+        }
+
+        info.resources_num++;
+    }
 }
 
 static uint32_t ShaderCalcPsSystemInputBase(const HW::ShaderRegisters& regs) {
