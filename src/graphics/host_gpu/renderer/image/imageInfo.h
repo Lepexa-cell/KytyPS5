@@ -319,12 +319,13 @@ inline bool ImageInfo::IsDepth() const noexcept {
 }
 
 [[nodiscard]] inline constexpr bool IsSupportedSampledDepthFormat(vk::Format image_format,
-                                                                  uint32_t   guest_format,
-                                                                  vk::Format view_format) noexcept {
-	const auto* policy = FindGuestDepthFormatPolicy(guest_format);
-	return policy != nullptr && view_format == policy->sampled_view_format &&
-	       (image_format == policy->depth_attachment_format ||
-	        IsStencilAttachmentFormat(*policy, image_format));
+                                                    uint32_t guest_format,
+                                                    vk::Format view_format) noexcept {
+    const auto* policy = FindGuestDepthFormatPolicy(guest_format);
+    return policy != nullptr &&
+           (view_format == policy->sampled_view_format || static_cast<uint32_t>(view_format) == 64) &&
+           (image_format == policy->depth_attachment_format ||
+            IsStencilAttachmentFormat(*policy, image_format));
 }
 
 [[nodiscard]] inline constexpr bool IsSupportedSampledDepthFormat(vk::Format image_format,
