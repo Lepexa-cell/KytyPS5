@@ -209,8 +209,8 @@ LIB_DEFINE(InitNet_1_Net) {
 	LIB_FUNC("2mKX2Spso7I", LibNet::NetSetsockopt);
 	LIB_FUNC("9T2pDF2Ryqg", LibNet::NetHtonl);
 	LIB_FUNC("iWQWrwiSt8A", LibNet::NetHtons);
-	LIB_FUNC("Azqo8ha7js4", LibNet::NetGenericStub);
-	LIB_FUNC("WJLYH5SuMAWI", LibNet::NetGenericStub);
+	LIB_FUNC("AzqoBha7js4", LibNet::NetGenericStub);
+    LIB_FUNC("kJLYH5uMAWI", LibNet::NetGenericStub);
 	LIB_FUNC("pQGpHYopAIY", LibNet::NetNtohl);
 	LIB_FUNC("Rbvt+5Y2iEw", LibNet::NetNtohs);
 }
@@ -1425,6 +1425,7 @@ LIB_DEFINE(InitNet_1_NpManager) {
 	LIB_FUNC("3Zl8BePTh9Y", NpManager::NpCheckCallback);
 	LIB_FUNC("Ec63y59l9tw", NpManager::NpSetNpTitleId);
 	LIB_FUNC("A2CQ3kgSopQ", NpManager::NpSetContentRestriction);
+	LIB_FUNC("3Tcz5bNCFZQ", NpGenericStub);
 	LIB_FUNC("VfRSmPmj8Q8", NpManager::NpRegisterStateCallback);
 	LIB_FUNC("qQJfO8HAiaY", NpManager::NpRegisterStateCallback);
 	LIB_FUNC("M3wFXbYQtAA", NpManager::NpUnregisterStateCallback);
@@ -1446,7 +1447,6 @@ LIB_DEFINE(InitNet_1_NpManager) {
 	LIB_FUNC("uqcPJLWL08M", NpManager::NpPollAsync);
 	LIB_FUNC("O80NrhUOPGY", NpManager::NpCheckPremium);
 	LIB_FUNC("eQH7nWPcAgc", NpManager::NpGetState);
-	LIB_FUNC("3Tcz5bNCFZQ", LibNpManager::NpGenericStub);
 	LIB_FUNC("e-ZuhGEoeC4", NpManager::NpGetNpReachabilityState);
 	LIB_FUNC("Oad3rvY-NJQ", NpManager::NpHasSignedUp);
 }
