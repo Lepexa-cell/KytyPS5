@@ -339,8 +339,15 @@ vk::ImageView Image::FindView(const ImageViewInfo& view_info) {
 		normalized.aspect = vk::ImageAspectFlagBits::eStencil;
 	}
 	normalized.usage = is_storage ? vk::ImageUsageFlagBits::eStorage : vk::ImageUsageFlags {};
-	const bool format_compatible = normalized.format != vk::Format::eUndefined &&
-	                               IsCompatibleViewFormat(image.format, normalized.format);
+	bool format_compatible = normalized.format != vk::Format::eUndefined &&
+                        IsCompatibleViewFormat(image.format, normalized.format);
+
+if (!format_compatible && normalized.format != vk::Format::eUndefined) {
+    LOGF("Warning: incompatible view format (image=%d, view=%d), falling back to image.format\n",
+         static_cast<int>(image.format), static_cast<int>(normalized.format));
+    normalized.format = image.format;
+    format_compatible = true;
+}
 	const bool slice_view =
 	    image.image_type == vk::ImageType::e3D && (normalized.type == vk::ImageViewType::e2D ||
 	                                               normalized.type == vk::ImageViewType::e2DArray);
