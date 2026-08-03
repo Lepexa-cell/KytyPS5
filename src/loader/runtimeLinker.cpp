@@ -966,7 +966,7 @@ static bool KytyExceptionHandler(const Common::HostException::ExceptionInfo& exc
 				                         .c_str()));
 			}
 		}
-
+    }
 		auto dump_guest_qwords = [](const char* name, uint64_t addr) {
 			if (addr == 0) {
 				LOGF("%s = 0\n", name);
@@ -1014,12 +1014,11 @@ static bool KytyExceptionHandler(const Common::HostException::ExceptionInfo& exc
 			dump_guest_qwords("vorbis len", info->rcx);
 		}
     if (info->exception_address == 0x00000009029b2633) {
-    LOGF("\n=== UFC5 NEW CRASH DETECTED (0x9029b2633) ===\n");
-    LOGF("RBX=%016" PRIx64 " RAX=%016" PRIx64 " RCX=%016" PRIx64 "\n", info->rbx, info->rax, info->rcx);
-    dump_guest_qwords("crash rbx obj", info->rbx);
-    dump_guest_qwords("crash rax obj", info->rax);
-}
-
+        LOGF("\n=== UFC5 NEW CRASH DETECTED (0x9029b2633) ===\n");
+        LOGF("RBX=%016" PRIx64 " RAX=%016" PRIx64 " RCX=%016" PRIx64 "\n", info->rbx, info->rax, info->rcx);
+        dump_guest_qwords("crash rbx obj", info->rbx);
+        dump_guest_qwords("crash rax obj", info->rax);
+    }
 	EXIT("Unknown exception!!! (%08" PRIx32 ")", info->native_code);
 	return false;
 }

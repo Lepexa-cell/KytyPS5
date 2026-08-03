@@ -187,6 +187,11 @@ LIB_DEFINE(InitNet_1_Net) {
 
 	LIB_FUNC("Nlev7Lg8k3A", LibNet::NetInit);
 	LIB_FUNC("HQOwnfMGipQ", LibNet::GetNetErrorAddr);
+	LIB_FUNC("AzqobBha7js4", LibNet::NetGenericStub);
+    LIB_FUNC("kJLYH5uMAWI", LibNet::NetGenericStub);
+    LIB_FUNC("hoOAofhhRvE", LibNet::NetGenericStub); 
+    LIB_FUNC("pQGpHYopAIY", LibNet::NetNtohl);
+    LIB_FUNC("Rbvt+5Y2iEw", LibNet::NetNtohs);
 	LIB_FUNC("PIWqhn9oSxc", LibNet::NetAccept);
 	LIB_FUNC("bErx49PgxyY", LibNet::NetBind);
 	LIB_FUNC("dgJBaeJnGpo", LibNet::NetPoolCreate);
@@ -209,14 +214,11 @@ LIB_DEFINE(InitNet_1_Net) {
 	LIB_FUNC("2mKX2Spso7I", LibNet::NetSetsockopt);
 	LIB_FUNC("9T2pDF2Ryqg", LibNet::NetHtonl);
 	LIB_FUNC("iWQWrwiSt8A", LibNet::NetHtons);
-	LIB_FUNC("AzqoBha7js4", LibNet::NetGenericStub);
-    LIB_FUNC("kJLYH5uMAWI", LibNet::NetGenericStub);
-	LIB_FUNC("pQGpHYopAIY", LibNet::NetNtohl);
-	LIB_FUNC("Rbvt+5Y2iEw", LibNet::NetNtohs);
 }
 LIB_DEFINE(InitNet_1_1_Net) {
     LIB_FUNC("AzqoBha7js4", LibNet::NetGenericStub);
     LIB_FUNC("kJLYH5uMAWI", LibNet::NetGenericStub);
+	LIB_FUNC("hoOAofhhRvE", LibNet::NetGenericStub);
 }
 } // namespace LibNet
 
