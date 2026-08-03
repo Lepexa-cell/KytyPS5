@@ -401,11 +401,16 @@ class GuestBuffer {
 public:
 	GuestBuffer() = default;
 	GuestBuffer(AvPlayerMemAllocator mem, uint32_t align, uint32_t size, bool texture)
-	    : m_mem(mem), m_texture(texture) {
-		m_data =
-		    static_cast<uint8_t*>(texture ? mem.allocate_texture(mem.object_pointer, align, size)
-		                                  : mem.allocate(mem.object_pointer, align, size));
-	}
+    : m_mem(mem), m_texture(texture) {
+    if (mem.allocate != nullptr && mem.object_pointer != 0) {
+        m_data = static_cast<uint8_t*>(texture ? mem.allocate_texture(mem.object_pointer, align, size)
+                                               : mem.allocate(mem.object_pointer, align, size));
+    }
+    if (m_data == nullptr && size > 0) {
+        LOG_ERROR("AvPlayer: Guest allocator returned nullptr! Fallback to internal allocation.");
+        m_data = static_cast<uint8_t*>(std::malloc(size));
+    }
+}
 	~GuestBuffer() { Reset(); }
 	GuestBuffer(const GuestBuffer&)            = delete;
 	GuestBuffer& operator=(const GuestBuffer&) = delete;
