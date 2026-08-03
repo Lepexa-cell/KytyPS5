@@ -865,8 +865,11 @@ static void RefreshShaders(RenderCommandBuffer& buffer, const DrawCallInfo& draw
 	std::array<Prospero::ColorComponentMapping, RENDER_COLOR_ATTACHMENTS_MAX>
 	    target_export_mapping {};
 	for (uint32_t i = 0; i < state.color_count; i++) {
-		target_export_mapping[state.color_info[i].target_slot] = state.color_info[i].export_mapping;
-	}
+        const auto slot = state.color_info[i].target_slot;
+        if (slot < RENDER_COLOR_ATTACHMENTS_MAX) {
+            target_export_mapping[slot] = state.color_info[i].export_mapping;
+        }
+    }
 	const auto lane_mask_mode = SelectGraphicsLaneMaskMode(64u);
 
 	if (log_phases) {
