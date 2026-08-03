@@ -51,6 +51,7 @@ constexpr OpcodeMap SOP1_OPS[] = {
     {0x3bu, Opcode::SBitreplicateB64B32},
     {0x3cu, Opcode::SAndSaveexecB32},
     {0x44u, Opcode::SAndn1SaveexecB32},
+	{0x7cu, Opcode::SMovB32},
 };
 
 constexpr OpcodeMap SOPC_OPS[] = {
