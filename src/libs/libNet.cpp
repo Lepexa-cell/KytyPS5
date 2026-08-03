@@ -653,6 +653,9 @@ LIB_DEFINE(InitNet_1_Http) {
 	LIB_FUNC("h9wmFZX4i-4", LibHttp::HttpGenericStub);
 	LIB_FUNC("Wh6bS2HQKBo", LibHttp::HttpGenericStub);
 	LIB_FUNC("i9mhafzkEi8", LibHttp::HttpGenericStub);
+	LIB_FUNC("Kh6bS2HQKbo", LibHttp::HttpGenericStub);
+    LIB_FUNC("zXqcE0fizz0", LibHttp::HttpGenericStub);
+    LIB_FUNC("DK+GoXCNT04", LibHttp::HttpGenericStub);
 	LIB_FUNC("zXqcE0Fizz0", LibHttp::HttpGenericStub);
 	LIB_FUNC("DK+GaXCNT0w", LibHttp::HttpGenericStub);
 	LIB_FUNC("rGNm+FjIXKk", LibHttp::HttpGenericStub);
