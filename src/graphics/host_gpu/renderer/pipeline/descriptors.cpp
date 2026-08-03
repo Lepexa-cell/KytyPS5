@@ -394,7 +394,7 @@ static bool IsSupportedStorageTextureDescriptor(const ShaderRecompiler::IR::Imag
 	    (swizzle == DstSel(4, 5, 6, 7) || !resource.read || resource.atomic);
 	const bool supported_mip_view = descriptor.BaseLevel() == 0 || is_1d || is_1d_array || is_2d || is_2d_array || is_3d;;
 	return (is_1d || is_1d_array || is_2d || is_2d_array || is_3d) && supported_tile &&
-	       supported_mip_view && descriptor.BaseLevel() == descriptor.LastLevel() &&
+	       supported_mip_view && descriptor.BaseLevel() <= descriptor.LastLevel() &&
 	       descriptor.LastLevel() <= descriptor.MaxMip() && descriptor.MinLod() == 0 &&
 	       supported_swizzle && descriptor.BCSwizzle() == 0 && !descriptor.MsaaDepth();
 }
