@@ -407,7 +407,7 @@ public:
                                                : mem.allocate(mem.object_pointer, align, size));
     }
     if (m_data == nullptr && size > 0) {
-        LOG_ERROR("AvPlayer: Guest allocator returned nullptr! Fallback to internal allocation.");
+        LOGF("AvPlayer: Guest allocator returned nullptr! Fallback to internal allocation.\n");
         m_data = static_cast<uint8_t*>(std::malloc(size));
     }
 }
