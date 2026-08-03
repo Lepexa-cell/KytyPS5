@@ -1101,17 +1101,25 @@ bool ShaderCompileInfoVS(const HW::VertexShaderInfo& regs, const HW::ShaderRegis
     {
         std::scoped_lock lock(g_shader_program_cache_mutex);
         if (auto iter = g_shader_program_cache.find(key); iter != g_shader_program_cache.end()) {
-            for (const auto& permutation: iter->second) {
-                if (TryUseVertexPermutation(*permutation, regs, info, shader_hash)) {
-                    spirv = MakeShaderSpirvView(permutation->spirv);
-                    LogShaderProgramCacheHit("VS", shader_hash,
-                                             static_cast<uint64_t>(spirv.size()));
-                    printf("[UFC5_DEBUG] SUCCESS: Loaded from cache\n");
-                    fflush(stdout);
-                    return true;
-                }
+    for (const auto& permutation : iter->second) {
+        if (TryUseVertexPermutation(*permutation, regs, info, shader_hash)) {
+            spirv = MakeShaderSpirvView(permutation->spirv);
+            
+            info.stage.program = permutation->program;
+
+            if (spirv.empty() || spirv.data() == nullptr) {
+                printf("[UFC5_DEBUG] WARNING: Cache hit but spirv data is invalid! Recompiling...\n");
+                fflush(stdout);
+                break;
             }
+
+            LogShaderProgramCacheHit("VS", shader_hash, static_cast<uint64_t>(spirv.size()));
+            printf("[UFC5_DEBUG] SUCCESS: Loaded from cache\n");
+            fflush(stdout);
+            return true;
         }
+    }
+}
     }
 
     std::vector<uint32_t> compiled_spirv;
