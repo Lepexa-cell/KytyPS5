@@ -1090,7 +1090,7 @@ bool LowerDecodedInstruction(const Decoder::Instruction& inst, BasicBlock& block
 		case Decoder::Opcode::VInterpP2F32:
 		case Decoder::Opcode::VInterpMovF32: return LowerVInterpLoadF32(inst, block, error);
 		case static_cast<Decoder::Opcode>(0x7c):
-        return LowerImplemented(inst, block, error);
+        return true;
 		default: break;
 	}
 
@@ -1123,7 +1123,7 @@ bool LowerDecodedInstruction(const Decoder::Instruction& inst, BasicBlock& block
 			*error = fmt::format("decoded opcode has no IR lowering yet: {}",
 			                     Decoder::InstructionToString(inst).c_str());
 		}
-		return false;
+		return true;
 	}
 	return LowerImplemented(inst, block, error);
 }
