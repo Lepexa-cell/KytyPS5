@@ -1013,12 +1013,12 @@ static bool KytyExceptionHandler(const Common::HostException::ExceptionInfo& exc
 			dump_guest_qwords("vorbis obj", local[0]);
 			dump_guest_qwords("vorbis len", info->rcx);
 		}
-
-		EXIT("Access violation: %s [%016" PRIx64 "] %s\n",
-		     Common::EnumName(info->access_violation_type).c_str(), info->access_violation_vaddr,
-		     (info->access_violation_vaddr == g_invalid_memory ? "(Unpatched object)" : ""));
-		return false;
-	}
+    if (info->exception_address == 0x00000009029b2633) {
+    LOGF("\n=== UFC5 NEW CRASH DETECTED (0x9029b2633) ===\n");
+    LOGF("RBX=%016" PRIx64 " RAX=%016" PRIx64 " RCX=%016" PRIx64 "\n", info->rbx, info->rax, info->rcx);
+    dump_guest_qwords("crash rbx obj", info->rbx);
+    dump_guest_qwords("crash rax obj", info->rax);
+}
 
 	EXIT("Unknown exception!!! (%08" PRIx32 ")", info->native_code);
 	return false;
