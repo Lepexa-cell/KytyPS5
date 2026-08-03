@@ -731,10 +731,10 @@ void CreatePipelineInternal(
 	rasterizer.pNext = &clip_ext;
 #endif
 	rasterizer.flags                   = {};
-	rasterizer.depthClampEnable        = VK_FALSE;
+	rasterizer.depthClampEnable        = VK_TRUE;
 	rasterizer.rasterizerDiscardEnable = VK_FALSE;
 	rasterizer.polygonMode             = vk::PolygonMode::eFill;
-	rasterizer.cullMode                = vk::CullModeFlagBits::eNone;
+	rasterizer.cullMode                = cull_mode;
 	rasterizer.frontFace               = front_face;
 	rasterizer.depthBiasEnable         = VK_FALSE;
 	rasterizer.depthBiasConstantFactor = 0.0f;

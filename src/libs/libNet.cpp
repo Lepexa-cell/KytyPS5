@@ -1458,6 +1458,9 @@ LIB_DEFINE(InitNet_1_NpManager) {
 	LIB_FUNC("e-ZuhGEoeC4", NpManager::NpGetNpReachabilityState);
 	LIB_FUNC("Oad3rvY-NJQ", NpManager::NpHasSignedUp);
 }
+LIB_DEFINE(InitNet_1_1_NpManager) {
+    LIB_FUNC("3Tcz5bNCfZQ", NpGenericStub);
+}
 
 } // namespace LibNpManager
 
@@ -4023,11 +4026,13 @@ LIB_DEFINE(InitPlatform_1) {
 
 LIB_DEFINE(InitNet_1) {
 	LibNet::InitNet_1_Net(s);
+	LibNet::InitNet_1_1_Net(s);
 	LibSsl::InitNet_1_Ssl(s);
 	LibHttp::InitNet_1_Http(s);
 	LibHttp2::InitNet_1_Http2(s);
 	LibNetCtl::InitNet_1_NetCtl(s);
 	LibNpManager::InitNet_1_NpManager(s);
+	LibNpManager::InitNet_1_1_NpManager(s);
 	LibNpSessionSignaling::InitNet_1_NpSessionSignaling(s);
 	LibNpEntitlementAccess::InitNet_1_NpEntitlementAccess(s);
 	LibNpAuth::InitNet_1_NpAuth(s);
