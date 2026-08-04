@@ -258,14 +258,11 @@ void Image::Upload(std::span<const vk::BufferImageCopy> copies, vk::Buffer buffe
                                         static_cast<uint64_t>(c.bufferImageHeight) *
                                         static_cast<uint64_t>(info.bytes_per_block);
         if (expected_bytes == 0) {
-            LOGF("Image::Upload: suspicious zero-size copy region: extent=%ux%u pitch=%u bpb=%u
-",
+            LOGF("Image::Upload: suspicious zero-size copy region: extent=%ux%u pitch=%u bpb=%u\n",
                  c.imageExtent.width, c.imageExtent.height, c.bufferRowLength, info.bytes_per_block);
         }
         if (c.bufferOffset + expected_bytes > size) {
-            LOGF("Image::Upload: copy exceeds provided buffer size: offset=0x%016" PRIx64
-                 " need=0x%016" PRIx64 " provided=0x%016" PRIx64 "
-",
+            LOGF("Image::Upload: copy exceeds provided buffer size: offset=0x%016" PRIx64 " need=0x%016" PRIx64 " provided=0x%016" PRIx64 "\n",
                  c.bufferOffset, expected_bytes, size);
         }
     }
@@ -321,14 +318,11 @@ void Image::Download(std::span<const vk::BufferImageCopy> copies, vk::Buffer buf
                                         static_cast<uint64_t>(c.bufferImageHeight) *
                                         static_cast<uint64_t>(info.bytes_per_block);
         if (expected_bytes == 0) {
-            LOGF("Image::Download: suspicious zero-size copy region: extent=%ux%u pitch=%u bpb=%u
-",
+            LOGF("Image::Download: suspicious zero-size copy region: extent=%ux%u pitch=%u bpb=%u\n",
                  c.imageExtent.width, c.imageExtent.height, c.bufferRowLength, info.bytes_per_block);
         }
         if (c.bufferOffset + expected_bytes > size) {
-            LOGF("Image::Download: copy exceeds provided buffer size: offset=0x%016" PRIx64
-                 " need=0x%016" PRIx64 " provided=0x%016" PRIx64 "
-",
+            LOGF("Image::Download: copy exceeds provided buffer size: offset=0x%016" PRIx64 " need=0x%016" PRIx64 " provided=0x%016" PRIx64 "\n",
                  c.bufferOffset, expected_bytes, size);
         }
     }
