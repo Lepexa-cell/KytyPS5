@@ -69,7 +69,8 @@ const SymbolRecord* SymbolDatabase::FindByNid(const std::string& nid, SymbolType
 	auto prefix = nid + "[";
 	auto suffix = fmt::format("[{}]", Common::EnumName(type).c_str());
 
-	for (const auto& symbol: m_symbols) {
+	for (size_t i = m_symbols.size(); i-- > 0;) {
+		const auto& symbol = m_symbols[i];
 		if (Common::StartsWith(symbol.name, prefix) && Common::EndsWith(symbol.name, suffix)) {
 			return &symbol;
 		}
@@ -81,7 +82,8 @@ const SymbolRecord* SymbolDatabase::FindByNid(const std::string& nid, SymbolType
 const SymbolRecord* SymbolDatabase::FindAnyByNid(const std::string& nid) const {
 	auto prefix = nid + "[";
 
-	for (const auto& symbol: m_symbols) {
+	for (size_t i = m_symbols.size(); i-- > 0;) {
+		const auto& symbol = m_symbols[i];
 		if (Common::StartsWith(symbol.name, prefix)) {
 			return &symbol;
 		}
@@ -91,6 +93,18 @@ const SymbolRecord* SymbolDatabase::FindAnyByNid(const std::string& nid) const {
 }
 
 const SymbolRecord* SymbolDatabase::FindByName(const std::string& name, SymbolType type) const {
+	auto prefix = name + "[";
+	auto suffix = fmt::format("[{}]", Common::EnumName(type).c_str());
+
+	for (size_t i = m_symbols.size(); i-- > 0;) {
+		const auto& symbol = m_symbols[i];
+		if (Common::StartsWith(symbol.name, prefix) && Common::EndsWith(symbol.name, suffix)) {
+			return &symbol;
+		}
+	}
+
+	return nullptr;
+}
 	auto prefix = name + "[";
 	auto suffix = fmt::format("[{}]", Common::EnumName(type).c_str());
 

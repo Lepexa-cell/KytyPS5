@@ -245,6 +245,28 @@ void Image::Upload(std::span<const vk::BufferImageCopy> copies, vk::Buffer buffe
 	dependency.imageMemoryBarrierCount  = static_cast<uint32_t>(image_barriers.size());
 	dependency.pImageMemoryBarriers     = image_barriers.data();
 	auto command                        = m_scheduler->Current().Handle();
+	// Sanitize copies: ensure bufferRowLength / bufferImageHeight are non-zero
+	for (auto& c : copies) {
+		// bufferRowLength and bufferImageHeight are in texels (not bytes)
+		if (c.bufferRowLength == 0) {
+			c.bufferRowLength = c.imageExtent.width;
+		}
+		if (c.bufferImageHeight == 0) {
+			c.bufferImageHeight = c.imageExtent.height;
+		}
+		const uint64_t expected_bytes = static_cast<uint64_t>(c.bufferRowLength) *
+										static_cast<uint64_t>(c.bufferImageHeight) *
+										static_cast<uint64_t>(info.bytes_per_block);
+		if (expected_bytes == 0) {
+			LOGF("Image::Upload: suspicious zero-size copy region: extent=%ux%u pitch=%u bpb=%u\n",
+				 c.imageExtent.width, c.imageExtent.height, c.bufferRowLength, info.bytes_per_block);
+		}
+		if (c.bufferOffset + expected_bytes > size) {
+			LOGF("Image::Upload: copy exceeds provided buffer size: offset=0x%016" PRIx64
+				 " need=0x%016" PRIx64 " provided=0x%016" PRIx64 "\n",
+				 c.bufferOffset, expected_bytes, size);
+		}
+	}
 	command.pipelineBarrier2(dependency);
 	command.copyBufferToImage(buffer, backing.image, vk::ImageLayout::eTransferDstOptimal,
 	                          static_cast<uint32_t>(copies.size()), copies.data());
@@ -285,6 +307,28 @@ void Image::Download(std::span<const vk::BufferImageCopy> copies, vk::Buffer buf
 	dependency.imageMemoryBarrierCount  = static_cast<uint32_t>(image_barriers.size());
 	dependency.pImageMemoryBarriers     = image_barriers.data();
 	auto command                        = m_scheduler->Current().Handle();
+	// Sanitize copies: ensure bufferRowLength / bufferImageHeight are non-zero
+	for (auto& c : copies) {
+		if (c.bufferRowLength == 0) {
+			// Default to tightly-packed rows (one texel per pixel row)
+			c.bufferRowLength = c.imageExtent.width;
+		}
+		if (c.bufferImageHeight == 0) {
+			c.bufferImageHeight = c.imageExtent.height;
+		}
+		const uint64_t expected_bytes = static_cast<uint64_t>(c.bufferRowLength) *
+										static_cast<uint64_t>(c.bufferImageHeight) *
+										static_cast<uint64_t>(info.bytes_per_block);
+		if (expected_bytes == 0) {
+			LOGF("Image::Download: suspicious zero-size copy region: extent=%ux%u pitch=%u bpb=%u\n",
+				 c.imageExtent.width, c.imageExtent.height, c.bufferRowLength, info.bytes_per_block);
+		}
+		if (c.bufferOffset + expected_bytes > size) {
+			LOGF("Image::Download: copy exceeds provided buffer size: offset=0x%016" PRIx64
+				 " need=0x%016" PRIx64 " provided=0x%016" PRIx64 "\n",
+				 c.bufferOffset, expected_bytes, size);
+		}
+	}
 	command.pipelineBarrier2(dependency);
 	command.copyImageToBuffer(backing.image, vk::ImageLayout::eTransferSrcOptimal, buffer,
 	                          static_cast<uint32_t>(copies.size()), copies.data());
