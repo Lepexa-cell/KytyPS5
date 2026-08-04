@@ -2535,14 +2535,14 @@ static int KYTY_SYSV_ABI NpUniversalDataSystemEventPropertyObjectSetUInt32(
     NpUniversalDataSystemEventPropertyObject* object, const char* key, uint32_t value) {
 	PRINT_NAME();
 
-	if (object == nullptr || key == nullptr) {
-		return NP_UNIVERSAL_DATA_SYSTEM_ERROR_INVALID_ARGUMENT;
-	}
-
 	LOGF("\t object = 0x%016" PRIx64 "\n"
 	     "\t key    = %s\n"
 	     "\t value  = %" PRIu32 "\n",
-	     reinterpret_cast<uint64_t>(object), key, value);
+	     reinterpret_cast<uint64_t>(object), key != nullptr ? key : "<null>", value);
+
+	if (object == nullptr || key == nullptr) {
+		return NP_UNIVERSAL_DATA_SYSTEM_ERROR_INVALID_ARGUMENT;
+	}
 
 	return 0;
 }
@@ -2551,14 +2551,14 @@ static int KYTY_SYSV_ABI NpUniversalDataSystemEventPropertyObjectSetInt64(
     NpUniversalDataSystemEventPropertyObject* object, const char* key, int64_t value) {
 	PRINT_NAME();
 
-	if (object == nullptr || key == nullptr) {
-		return NP_UNIVERSAL_DATA_SYSTEM_ERROR_INVALID_ARGUMENT;
-	}
-
 	LOGF("\t object = 0x%016" PRIx64 "\n"
 	     "\t key    = %s\n"
 	     "\t value  = %" PRId64 "\n",
-	     reinterpret_cast<uint64_t>(object), key, value);
+	     reinterpret_cast<uint64_t>(object), key != nullptr ? key : "<null>", value);
+
+	if (object == nullptr || key == nullptr) {
+		return NP_UNIVERSAL_DATA_SYSTEM_ERROR_INVALID_ARGUMENT;
+	}
 
 	return 0;
 }
@@ -2567,14 +2567,14 @@ static int KYTY_SYSV_ABI NpUniversalDataSystemEventPropertyObjectSetUInt64(
     NpUniversalDataSystemEventPropertyObject* object, const char* key, uint64_t value) {
 	PRINT_NAME();
 
-	if (object == nullptr || key == nullptr) {
-		return NP_UNIVERSAL_DATA_SYSTEM_ERROR_INVALID_ARGUMENT;
-	}
-
 	LOGF("\t object = 0x%016" PRIx64 "\n"
 	     "\t key    = %s\n"
 	     "\t value  = %" PRIu64 "\n",
-	     reinterpret_cast<uint64_t>(object), key, value);
+	     reinterpret_cast<uint64_t>(object), key != nullptr ? key : "<null>", value);
+
+	if (object == nullptr || key == nullptr) {
+		return NP_UNIVERSAL_DATA_SYSTEM_ERROR_INVALID_ARGUMENT;
+	}
 
 	return 0;
 }
@@ -2583,14 +2583,14 @@ static int KYTY_SYSV_ABI NpUniversalDataSystemEventPropertyObjectSetFloat32(
     NpUniversalDataSystemEventPropertyObject* object, const char* key, float value) {
 	PRINT_NAME();
 
-	if (object == nullptr || key == nullptr) {
-		return NP_UNIVERSAL_DATA_SYSTEM_ERROR_INVALID_ARGUMENT;
-	}
-
 	LOGF("\t object = 0x%016" PRIx64 "\n"
 	     "\t key    = %s\n"
 	     "\t value  = %f\n",
-	     reinterpret_cast<uint64_t>(object), key, static_cast<double>(value));
+	     reinterpret_cast<uint64_t>(object), key != nullptr ? key : "<null>", static_cast<double>(value));
+
+	if (object == nullptr || key == nullptr) {
+		return NP_UNIVERSAL_DATA_SYSTEM_ERROR_INVALID_ARGUMENT;
+	}
 
 	return 0;
 }
@@ -2599,14 +2599,14 @@ static int KYTY_SYSV_ABI NpUniversalDataSystemEventPropertyObjectSetFloat64(
     NpUniversalDataSystemEventPropertyObject* object, const char* key, double value) {
 	PRINT_NAME();
 
-	if (object == nullptr || key == nullptr) {
-		return NP_UNIVERSAL_DATA_SYSTEM_ERROR_INVALID_ARGUMENT;
-	}
-
 	LOGF("\t object = 0x%016" PRIx64 "\n"
 	     "\t key    = %s\n"
 	     "\t value  = %f\n",
-	     reinterpret_cast<uint64_t>(object), key, value);
+	     reinterpret_cast<uint64_t>(object), key != nullptr ? key : "<null>", value);
+
+	if (object == nullptr || key == nullptr) {
+		return NP_UNIVERSAL_DATA_SYSTEM_ERROR_INVALID_ARGUMENT;
+	}
 
 	return 0;
 }
@@ -2906,72 +2906,38 @@ static int KYTY_SYSV_ABI NpUniversalDataSystemTerminate() {
 
 LIB_DEFINE(InitNet_1_NpUniversalDataSystem) {
 	LIB_FUNC("sjaobBgqeB4", LibNpUniversalDataSystem::NpUniversalDataSystemInitialize);
-	LIB_FUNC("5zBnau1uIEo", LibNpUniversalDataSystem::NpUniversalDataSystemCreateContext);
-	LIB_FUNC("hT0IAEvN+M0", LibNpUniversalDataSystem::NpUniversalDataSystemCreateHandle);
-	LIB_FUNC("p+GcLqwpL9M", LibNpUniversalDataSystem::NpUniversalDataSystemCreateEvent);
+	LIB_FUNC("5zBnau1uIeo", LibNpUniversalDataSystem::NpUniversalDataSystemCreateContext);
+	LIB_FUNC("hT0IAEVN+M0", LibNpUniversalDataSystem::NpUniversalDataSystemCreateHandle);
+	LIB_FUNC("p+gCLqwPl9M", LibNpUniversalDataSystem::NpUniversalDataSystemCreateEvent);
 	LIB_FUNC("CzkKf7ahIyU", LibNpUniversalDataSystem::NpUniversalDataSystemPostEvent);
 	LIB_FUNC("AUIHb7jUX3I", LibNpUniversalDataSystem::NpUniversalDataSystemDestroyHandle);
-	LIB_FUNC("jZCqWFgMehE", LibNpUniversalDataSystem::NpUniversalDataSystemAbortHandle);
-	LIB_FUNC("wB7IWzGp2v0", LibNpUniversalDataSystem::NpUniversalDataSystemDestroyContext);
-	LIB_FUNC("su7jW3VDDb4", LibNpUniversalDataSystem::NpUniversalDataSystemGetMemoryStat);
+	LIB_FUNC("jzCqWfgMehE", LibNpUniversalDataSystem::NpUniversalDataSystemAbortHandle);
+	LIB_FUNC("wB7IwzGp2v0", LibNpUniversalDataSystem::NpUniversalDataSystemDestroyContext);
+	LIB_FUNC("su7jw3VDDb4", LibNpUniversalDataSystem::NpUniversalDataSystemGetMemoryStat);
 	LIB_FUNC("+s14jq-KGYw", LibNpUniversalDataSystem::NpUniversalDataSystemEventEstimateSize);
-	LIB_FUNC("vj6CQGWtEBg", LibNpUniversalDataSystem::NpUniversalDataSystemEventToString);
-	LIB_FUNC("wG+84pnNIuo", LibNpUniversalDataSystem::NpUniversalDataSystemDestroyEvent);
-	LIB_FUNC("tpFJ8LIKvPw", LibNpUniversalDataSystem::NpUniversalDataSystemRegisterContext);
-	LIB_FUNC("s6W4Zl4Slgk",
-	         LibNpUniversalDataSystem::NpUniversalDataSystemCreateEventPropertyObject);
-	LIB_FUNC("kKUH0Viib3c",
-	         LibNpUniversalDataSystem::NpUniversalDataSystemDestroyEventPropertyObject);
-	LIB_FUNC("MfDb+4Nln64",
-	         LibNpUniversalDataSystem::NpUniversalDataSystemEventPropertyObjectSetString);
-	LIB_FUNC("YE4dbtbz6OE",
-	         LibNpUniversalDataSystem::NpUniversalDataSystemEventPropertyObjectSetInt32);
-	LIB_FUNC("AzD4irAcKE4",
-	         LibNpUniversalDataSystem::NpUniversalDataSystemEventPropertyObjectSetUInt32);
-	LIB_FUNC("56QLTqx911s",
-	         LibNpUniversalDataSystem::NpUniversalDataSystemEventPropertyObjectSetInt64);
-	LIB_FUNC("xvsP5Yz6FmY",
-	         LibNpUniversalDataSystem::NpUniversalDataSystemEventPropertyObjectSetUInt64);
-	LIB_FUNC("lbPlT4+QVcE",
-	         LibNpUniversalDataSystem::NpUniversalDataSystemEventPropertyObjectSetFloat32);
-	LIB_FUNC("4Fu8tHW+u-k",
-	         LibNpUniversalDataSystem::NpUniversalDataSystemEventPropertyObjectSetFloat64);
-	LIB_FUNC("Fidd8vWgyVE",
-	         LibNpUniversalDataSystem::NpUniversalDataSystemEventPropertyObjectSetBool);
-	LIB_FUNC("wAcxBDLHj1M",
-	         LibNpUniversalDataSystem::NpUniversalDataSystemEventPropertyObjectSetBinary);
-	LIB_FUNC("74ASEqxSnkM",
-	         LibNpUniversalDataSystem::NpUniversalDataSystemEventPropertyObjectSetObject);
-	LIB_FUNC("Wxbg5x3pTXA",
-	         LibNpUniversalDataSystem::NpUniversalDataSystemEventPropertyObjectSetArray);
-	LIB_FUNC("Hm7qubT3b70",
-	         LibNpUniversalDataSystem::NpUniversalDataSystemCreateEventPropertyArray);
-	LIB_FUNC("W-0xwY0ZMjw",
-	         LibNpUniversalDataSystem::NpUniversalDataSystemDestroyEventPropertyArray);
-	LIB_FUNC("4llLk7YJRTE",
-	         LibNpUniversalDataSystem::NpUniversalDataSystemEventPropertyArraySetString);
-	LIB_FUNC("BypQuF113-k",
-	         LibNpUniversalDataSystem::NpUniversalDataSystemEventPropertyArraySetInt32);
-	LIB_FUNC("yMi0xAOpmXM",
-	         LibNpUniversalDataSystem::NpUniversalDataSystemEventPropertyArraySetUInt32);
-	LIB_FUNC("viVXAwmmYrY",
-	         LibNpUniversalDataSystem::NpUniversalDataSystemEventPropertyArraySetInt64);
-	LIB_FUNC("Qo9qR7v5zO4",
-	         LibNpUniversalDataSystem::NpUniversalDataSystemEventPropertyArraySetUInt64);
-	LIB_FUNC("JmgwKm96Lq4",
-	         LibNpUniversalDataSystem::NpUniversalDataSystemEventPropertyArraySetFloat32);
-	LIB_FUNC("sbSYZLR5AiE",
-	         LibNpUniversalDataSystem::NpUniversalDataSystemEventPropertyArraySetFloat64);
-	LIB_FUNC("0+l4QSWCM4E",
-	         LibNpUniversalDataSystem::NpUniversalDataSystemEventPropertyArraySetBool);
-	LIB_FUNC("IEdUCV9j2Cw",
-	         LibNpUniversalDataSystem::NpUniversalDataSystemEventPropertyArraySetBinary);
-	LIB_FUNC("XY14n3jNIpE",
-	         LibNpUniversalDataSystem::NpUniversalDataSystemEventPropertyArraySetObject);
-	LIB_FUNC("rdi9BAfDLq8",
-	         LibNpUniversalDataSystem::NpUniversalDataSystemEventPropertyArraySetArray);
-	LIB_FUNC("KmN62tT4U8A", LibNpUniversalDataSystem::NpUniversalDataSystemGetStorageStat);
-	LIB_FUNC("47UAEuQl+iI", LibNpUniversalDataSystem::NpUniversalDataSystemTerminate);
+	LIB_FUNC("vj6CQGWteBg", LibNpUniversalDataSystem::NpUniversalDataSystemEventToString);
+	LIB_FUNC("wg+84pnNIuo", LibNpUniversalDataSystem::NpUniversalDataSystemDestroyEvent);
+	LIB_FUNC("tpFJ8LIkVPw", LibNpUniversalDataSystem::NpUniversalDataSystemRegisterContext);
+	LIB_FUNC("s6W4Zl4SIgk", LibNpUniversalDataSystem::NpUniversalDataSystemCreateEventPropertyObject);
+	LIB_FUNC("kKUH0Viib3c", LibNpUniversalDataSystem::NpUniversalDataSystemDestroyEventPropertyObject);
+	LIB_FUNC("MFDb+4Nln64", LibNpUniversalDataSystem::NpUniversalDataSystemeEventPropertyObjectSetString);
+	LIB_FUNC("YE4Dbtbz60E", LibNpUniversalDataSystem::NpUniversalDataSystemeEventPropertyObjectSetInt32);
+	LIB_FUNC("AzD4irACKe4", LibNpUniversalDataSystem::NpUniversalDataSystemeEventPropertyObjectSetUInt32);
+	LIB_FUNC("kJLYH5uMAWI", LibNpUniversalDataSystem::NpUniversalDataSystemeEventPropertyObjectSetUInt32);
+	LIB_FUNC("56QLTqx911s", LibNpUniversalDataSystem::NpUniversalDataSystemeEventPropertyObjectSetInt64);
+	LIB_FUNC("xvsP5Yz6FmY", LibNpUniversalDataSystem::NpUniversalDataSystemeEventPropertyObjectSetUInt64);
+	LIB_FUNC("1bP1t4+QVcE", LibNpUniversalDataSystem::NpUniversalDataSystemeEventPropertyObjectSetFloat32);
+	LIB_FUNC("4Fu8tHW+u-k", LibNpUniversalDataSystem::NpUniversalDataSystemeEventPropertyObjectSetFloat64);
+	LIB_FUNC("Fidd8vWgyVE", LibNpUniversalDataSystem::NpUniversalDataSystemeEventPropertyObjectSetBool);
+	LIB_FUNC("wAcxBDLHj1M", LibNpUniversalDataSystem::NpUniversalDataSystemeEventPropertyObjectSetBinary);
+	LIB_FUNC("74ASEqxSnkM", LibNpUniversalDataSystem::NpUniversalDataSystemeEventPropertyObjectSetObject);
+	LIB_FUNC("Wxbg5x3pTXA", LibNpUniversalDataSystem::NpUniversalDataSystemeEventPropertyObjectSetArray);
+	LIB_FUNC("Hm7qubT3b70", LibNpUniversalDataSystem::NpUniversalDataSystemCreateEventPropertyArray);
+	LIB_FUNC("W-0xwY0ZMjW", LibNpUniversalDataSystem::NpUniversalDataSystemDestroyEventPropertyArray);
+	LIB_FUNC("41lLk7YJRTE", LibNpUniversalDataSystem::NpUniversalDataSystemeEventPropertyArraySetString);
+	LIB_FUNC("BypQUf113-k", LibNpUniversalDataSystem::NpUniversalDataSystemeEventPropertyArraySetInt32);
+	LIB_FUNC("yMi0xAOpmXM", LibNpUniversalDataSystem::NpUniversalDataSystemeEventPropertyArraySetUInt32);
+	LIB_FUNC("viVXAWMmYrY", LibNpUniversalDataSystem::NpUniversalDataSystemeEventPropertyArraySetInt64);
 }
 
 } // namespace LibNpUniversalDataSystem
