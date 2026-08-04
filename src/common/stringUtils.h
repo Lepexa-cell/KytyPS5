@@ -4,15 +4,9 @@
 #include "common/byteBuffer.h"
 #include "common/common.h"
 
-// Suppress deprecated <codecvt> warnings on MSVC/clang-cl
-#if defined(_MSC_VER) && !defined(_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING)
-#define _SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING
-#endif
-
 #include <algorithm>
 #include <cctype>
 #include <charconv>
-#include <codecvt>
 #include <filesystem>
 #include <fmt/format.h>
 #include <locale>
@@ -322,9 +316,43 @@ inline std::string SafeCsv(std::string_view text) {
 }
 
 inline std::string Utf16ToUtf8(const char16_t* utf16) {
-	std::u16string                                                    input(utf16);
-	std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> convert;
-	return convert.to_bytes(input);
+	std::string result;
+	if (utf16 == nullptr) {
+		return result;
+	}
+
+	while (*utf16 != u'\0') {
+		char32_t code_point = *utf16++;
+		if (code_point >= 0xD800 && code_point <= 0xDBFF) {
+			char16_t low = *utf16;
+			if (low >= 0xDC00 && low <= 0xDFFF) {
+				utf16++;
+				code_point = 0x10000 + (((code_point - 0xD800) << 10) | (low - 0xDC00));
+			} else {
+				code_point = 0xFFFD;
+			}
+		} else if (code_point >= 0xDC00 && code_point <= 0xDFFF) {
+			code_point = 0xFFFD;
+		}
+
+		if (code_point <= 0x7F) {
+			result.push_back(static_cast<char>(code_point));
+		} else if (code_point <= 0x7FF) {
+			result.push_back(static_cast<char>(0xC0 | ((code_point >> 6) & 0x1F)));
+			result.push_back(static_cast<char>(0x80 | (code_point & 0x3F)));
+		} else if (code_point <= 0xFFFF) {
+			result.push_back(static_cast<char>(0xE0 | ((code_point >> 12) & 0x0F)));
+			result.push_back(static_cast<char>(0x80 | ((code_point >> 6) & 0x3F)));
+			result.push_back(static_cast<char>(0x80 | (code_point & 0x3F)));
+		} else {
+			result.push_back(static_cast<char>(0xF0 | ((code_point >> 18) & 0x07)));
+			result.push_back(static_cast<char>(0x80 | ((code_point >> 12) & 0x3F)));
+			result.push_back(static_cast<char>(0x80 | ((code_point >> 6) & 0x3F)));
+			result.push_back(static_cast<char>(0x80 | (code_point & 0x3F)));
+		}
+	}
+
+	return result;
 }
 
 inline ByteBuffer HexToBin(std::string_view text) {

@@ -105,16 +105,5 @@ const SymbolRecord* SymbolDatabase::FindByName(const std::string& name, SymbolTy
 
 	return nullptr;
 }
-	auto prefix = name + "[";
-	auto suffix = fmt::format("[{}]", Common::EnumName(type).c_str());
-
-	for (const auto& symbol: m_symbols) {
-		if (Common::StartsWith(symbol.name, prefix) && Common::EndsWith(symbol.name, suffix)) {
-			return &symbol;
-		}
-	}
-
-	return nullptr;
-}
 
 } // namespace Loader
