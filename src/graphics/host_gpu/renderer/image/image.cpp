@@ -341,8 +341,7 @@ void Image::Download(std::span<const vk::BufferImageCopy> copies, vk::Buffer buf
 }
 
 std::pair<uint32_t, uint32_t> Image::SanitizeCopyLayers(const Image& source,
-                                                        const Image& destination, uint32_t depth) {
-                                                        const Image& destination, uint32_t depth) {
+														const Image& destination, uint32_t depth) {
 	const auto source_type        = source.backing.image_type;
 	const auto destination_type   = destination.backing.image_type;
 	uint32_t   source_layers      = source.backing.layers;
