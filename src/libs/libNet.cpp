@@ -216,14 +216,15 @@ LIB_DEFINE(InitNet_1_Net) {
 	LIB_FUNC("iWQWrwiSt8A", LibNet::NetHtons);
 }
 
-namespace LibNpUniversalDataSystem {
-	static int KYTY_SYSV_ABI NpUniversalDataSystemEventPropertyObjectSetUInt32(uint64_t param_1, uint64_t param_2, uint64_t param_3, uint64_t param_4, uint64_t param_5, uint64_t param_6);
+static int KYTY_SYSV_ABI NpUniversalDataSystemEventPropertyObjectSetUInt32(uint64_t param_1, uint64_t param_2, uint64_t param_3, uint64_t param_4, uint64_t param_5, uint64_t param_6) {
+	PRINT_NAME();
+	return 0;
 }
 
 LIB_DEFINE(InitNet_1_1_Net) {
-    LIB_FUNC("AzqoBha7js4", LibNet::NetGenericStub);
+	LIB_FUNC("AzqoBha7js4", LibNet::NetGenericStub);
 	LIB_FUNC("hoOAofhhRvE", LibNet::NetGenericStub);
-	LIB_FUNC("kJLYH5uMAWI", LibNpUniversalDataSystem::NpUniversalDataSystemEventPropertyObjectSetUInt32);
+	LIB_FUNC("kJLYH5uMAWI", LibNet::NpUniversalDataSystemEventPropertyObjectSetUInt32);
 }
 } // namespace LibNet
 
