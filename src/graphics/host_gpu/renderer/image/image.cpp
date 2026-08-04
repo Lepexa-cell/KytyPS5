@@ -11,6 +11,7 @@
 #include <algorithm>
 #include <array>
 #include <cstdint>
+#include <vector>
 #include <xxhash.h>
 
 namespace Libs::Graphics {
@@ -223,126 +224,130 @@ void Image::Transit(vk::ImageLayout destination_layout, vk::AccessFlags2 destina
 
 void Image::Upload(std::span<const vk::BufferImageCopy> copies, vk::Buffer buffer, uint64_t offset,
                    uint64_t size) {
-	EXIT_IF(m_scheduler == nullptr || copies.empty() || buffer == nullptr || size == 0);
-	m_scheduler->EndRendering();
-	vk::BufferMemoryBarrier2 buffer_barrier {};
-	buffer_barrier.srcStageMask        = vk::PipelineStageFlagBits2::eAllCommands;
-	buffer_barrier.srcAccessMask       = vk::AccessFlagBits2::eMemoryWrite;
-	buffer_barrier.dstStageMask        = vk::PipelineStageFlagBits2::eTransfer;
-	buffer_barrier.dstAccessMask       = vk::AccessFlagBits2::eTransferRead;
-	buffer_barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-	buffer_barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-	buffer_barrier.buffer              = buffer;
-	buffer_barrier.offset              = offset;
-	buffer_barrier.size                = size;
-	const auto image_barriers =
-	    GetBarriers(vk::ImageLayout::eTransferDstOptimal, vk::AccessFlagBits2::eTransferWrite,
-	                vk::PipelineStageFlagBits2::eCopy, {});
-	vk::DependencyInfo dependency {};
-	dependency.dependencyFlags          = vk::DependencyFlagBits::eByRegion;
-	dependency.bufferMemoryBarrierCount = 1;
-	dependency.pBufferMemoryBarriers    = &buffer_barrier;
-	dependency.imageMemoryBarrierCount  = static_cast<uint32_t>(image_barriers.size());
-	dependency.pImageMemoryBarriers     = image_barriers.data();
-	auto command                        = m_scheduler->Current().Handle();
-	// Sanitize copies: ensure bufferRowLength / bufferImageHeight are non-zero
-	for (auto& c : copies) {
-		// bufferRowLength and bufferImageHeight are in texels (not bytes)
-		if (c.bufferRowLength == 0) {
-			c.bufferRowLength = c.imageExtent.width;
-		}
-		if (c.bufferImageHeight == 0) {
-			c.bufferImageHeight = c.imageExtent.height;
-		}
-		const uint64_t expected_bytes = static_cast<uint64_t>(c.bufferRowLength) *
-										static_cast<uint64_t>(c.bufferImageHeight) *
-										static_cast<uint64_t>(info.bytes_per_block);
-		if (expected_bytes == 0) {
-			LOGF("Image::Upload: suspicious zero-size copy region: extent=%ux%u pitch=%u bpb=%u\n",
-				 c.imageExtent.width, c.imageExtent.height, c.bufferRowLength, info.bytes_per_block);
-		}
-		if (c.bufferOffset + expected_bytes > size) {
-			LOGF("Image::Upload: copy exceeds provided buffer size: offset=0x%016" PRIx64
-				 " need=0x%016" PRIx64 " provided=0x%016" PRIx64 "\n",
-				 c.bufferOffset, expected_bytes, size);
-		}
-	}
-	command.pipelineBarrier2(dependency);
-	command.copyBufferToImage(buffer, backing.image, vk::ImageLayout::eTransferDstOptimal,
-	                          static_cast<uint32_t>(copies.size()), copies.data());
-	buffer_barrier.srcStageMask  = vk::PipelineStageFlagBits2::eTransfer;
-	buffer_barrier.srcAccessMask = vk::AccessFlagBits2::eTransferRead;
-	buffer_barrier.dstStageMask  = vk::PipelineStageFlagBits2::eAllCommands;
-	buffer_barrier.dstAccessMask =
-	    vk::AccessFlagBits2::eMemoryRead | vk::AccessFlagBits2::eMemoryWrite;
-	dependency.imageMemoryBarrierCount = 0;
-	dependency.pImageMemoryBarriers    = nullptr;
-	command.pipelineBarrier2(dependency);
-	Transit(vk::ImageLayout::eGeneral,
-	        vk::AccessFlagBits2::eShaderRead | vk::AccessFlagBits2::eTransferRead, {}, command);
+    EXIT_IF(m_scheduler == nullptr || copies.empty() || buffer == nullptr || size == 0);
+    m_scheduler->EndRendering();
+    vk::BufferMemoryBarrier2 buffer_barrier {};
+    buffer_barrier.srcStageMask        = vk::PipelineStageFlagBits2::eAllCommands;
+    buffer_barrier.srcAccessMask       = vk::AccessFlagBits2::eMemoryWrite;
+    buffer_barrier.dstStageMask        = vk::PipelineStageFlagBits2::eTransfer;
+    buffer_barrier.dstAccessMask       = vk::AccessFlagBits2::eTransferRead;
+    buffer_barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+    buffer_barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+    buffer_barrier.buffer              = buffer;
+    buffer_barrier.offset              = offset;
+    buffer_barrier.size                = size;
+    const auto image_barriers =
+        GetBarriers(vk::ImageLayout::eTransferDstOptimal, vk::AccessFlagBits2::eTransferWrite,
+                    vk::PipelineStageFlagBits2::eCopy, {});
+    vk::DependencyInfo dependency {};
+    dependency.dependencyFlags          = vk::DependencyFlagBits::eByRegion;
+    dependency.bufferMemoryBarrierCount = 1;
+    dependency.pBufferMemoryBarriers    = &buffer_barrier;
+    dependency.imageMemoryBarrierCount  = static_cast<uint32_t>(image_barriers.size());
+    dependency.pImageMemoryBarriers     = image_barriers.data();
+    auto command                        = m_scheduler->Current().Handle();
+    std::vector<vk::BufferImageCopy> sanitized_copies(copies.begin(), copies.end());
+    for (auto& c : sanitized_copies) {
+        if (c.bufferRowLength == 0) {
+            c.bufferRowLength = c.imageExtent.width;
+        }
+        if (c.bufferImageHeight == 0) {
+            c.bufferImageHeight = c.imageExtent.height;
+        }
+        const uint64_t expected_bytes = static_cast<uint64_t>(c.bufferRowLength) *
+                                        static_cast<uint64_t>(c.bufferImageHeight) *
+                                        static_cast<uint64_t>(info.bytes_per_block);
+        if (expected_bytes == 0) {
+            LOGF("Image::Upload: suspicious zero-size copy region: extent=%ux%u pitch=%u bpb=%u
+",
+                 c.imageExtent.width, c.imageExtent.height, c.bufferRowLength, info.bytes_per_block);
+        }
+        if (c.bufferOffset + expected_bytes > size) {
+            LOGF("Image::Upload: copy exceeds provided buffer size: offset=0x%016" PRIx64
+                 " need=0x%016" PRIx64 " provided=0x%016" PRIx64 "
+",
+                 c.bufferOffset, expected_bytes, size);
+        }
+    }
+    command.pipelineBarrier2(dependency);
+    command.copyBufferToImage(buffer, backing.image, vk::ImageLayout::eTransferDstOptimal,
+                              static_cast<uint32_t>(sanitized_copies.size()),
+                              sanitized_copies.data());
+    buffer_barrier.srcAccessMask = vk::AccessFlagBits2::eTransferRead;
+    buffer_barrier.dstStageMask  = vk::PipelineStageFlagBits2::eAllCommands;
+    buffer_barrier.dstAccessMask =
+        vk::AccessFlagBits2::eMemoryRead | vk::AccessFlagBits2::eMemoryWrite;
+    dependency.imageMemoryBarrierCount = 0;
+    dependency.pImageMemoryBarriers    = nullptr;
+    command.pipelineBarrier2(dependency);
+    Transit(vk::ImageLayout::eGeneral,
+            vk::AccessFlagBits2::eShaderRead | vk::AccessFlagBits2::eTransferRead, {}, command);
 }
 
 void Image::Download(std::span<const vk::BufferImageCopy> copies, vk::Buffer buffer,
                      uint64_t offset, uint64_t size) {
-	EXIT_IF(m_scheduler == nullptr || copies.empty() || buffer == nullptr || size == 0);
-	m_scheduler->EndRendering();
-	vk::BufferMemoryBarrier2 buffer_barrier {};
-	buffer_barrier.srcStageMask = vk::PipelineStageFlagBits2::eAllCommands;
-	buffer_barrier.srcAccessMask =
-	    vk::AccessFlagBits2::eMemoryRead | vk::AccessFlagBits2::eMemoryWrite;
-	buffer_barrier.dstStageMask        = vk::PipelineStageFlagBits2::eCopy;
-	buffer_barrier.dstAccessMask       = vk::AccessFlagBits2::eTransferWrite;
-	buffer_barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-	buffer_barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-	buffer_barrier.buffer              = buffer;
-	buffer_barrier.offset              = offset;
-	buffer_barrier.size                = size;
-	const auto image_barriers =
-	    GetBarriers(vk::ImageLayout::eTransferSrcOptimal, vk::AccessFlagBits2::eTransferRead,
-	                vk::PipelineStageFlagBits2::eCopy, {});
-	vk::DependencyInfo dependency {};
-	dependency.dependencyFlags          = vk::DependencyFlagBits::eByRegion;
-	dependency.bufferMemoryBarrierCount = 1;
-	dependency.pBufferMemoryBarriers    = &buffer_barrier;
-	dependency.imageMemoryBarrierCount  = static_cast<uint32_t>(image_barriers.size());
-	dependency.pImageMemoryBarriers     = image_barriers.data();
-	auto command                        = m_scheduler->Current().Handle();
-	// Sanitize copies: ensure bufferRowLength / bufferImageHeight are non-zero
-	for (auto& c : copies) {
-		if (c.bufferRowLength == 0) {
-			// Default to tightly-packed rows (one texel per pixel row)
-			c.bufferRowLength = c.imageExtent.width;
-		}
-		if (c.bufferImageHeight == 0) {
-			c.bufferImageHeight = c.imageExtent.height;
-		}
-		const uint64_t expected_bytes = static_cast<uint64_t>(c.bufferRowLength) *
-										static_cast<uint64_t>(c.bufferImageHeight) *
-										static_cast<uint64_t>(info.bytes_per_block);
-		if (expected_bytes == 0) {
-			LOGF("Image::Download: suspicious zero-size copy region: extent=%ux%u pitch=%u bpb=%u\n",
-				 c.imageExtent.width, c.imageExtent.height, c.bufferRowLength, info.bytes_per_block);
-		}
-		if (c.bufferOffset + expected_bytes > size) {
-			LOGF("Image::Download: copy exceeds provided buffer size: offset=0x%016" PRIx64
-				 " need=0x%016" PRIx64 " provided=0x%016" PRIx64 "\n",
-				 c.bufferOffset, expected_bytes, size);
-		}
-	}
-	command.pipelineBarrier2(dependency);
-	command.copyImageToBuffer(backing.image, vk::ImageLayout::eTransferSrcOptimal, buffer,
-	                          static_cast<uint32_t>(copies.size()), copies.data());
-	buffer_barrier.srcStageMask  = vk::PipelineStageFlagBits2::eCopy;
-	buffer_barrier.srcAccessMask = vk::AccessFlagBits2::eTransferWrite;
-	buffer_barrier.dstStageMask  = vk::PipelineStageFlagBits2::eAllCommands;
-	buffer_barrier.dstAccessMask =
-	    vk::AccessFlagBits2::eMemoryRead | vk::AccessFlagBits2::eMemoryWrite;
-	dependency.imageMemoryBarrierCount = 0;
-	dependency.pImageMemoryBarriers    = nullptr;
-	command.pipelineBarrier2(dependency);
+    EXIT_IF(m_scheduler == nullptr || copies.empty() || buffer == nullptr || size == 0);
+    m_scheduler->EndRendering();
+    vk::BufferMemoryBarrier2 buffer_barrier {};
+    buffer_barrier.srcStageMask = vk::PipelineStageFlagBits2::eAllCommands;
+    buffer_barrier.srcAccessMask =
+        vk::AccessFlagBits2::eMemoryRead | vk::AccessFlagBits2::eMemoryWrite;
+    buffer_barrier.dstStageMask        = vk::PipelineStageFlagBits2::eCopy;
+    buffer_barrier.dstAccessMask       = vk::AccessFlagBits2::eTransferWrite;
+    buffer_barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+    buffer_barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+    buffer_barrier.buffer              = buffer;
+    buffer_barrier.offset              = offset;
+    buffer_barrier.size                = size;
+    const auto image_barriers =
+        GetBarriers(vk::ImageLayout::eTransferSrcOptimal, vk::AccessFlagBits2::eTransferRead,
+                    vk::PipelineStageFlagBits2::eCopy, {});
+    vk::DependencyInfo dependency {};
+    dependency.dependencyFlags          = vk::DependencyFlagBits::eByRegion;
+    dependency.bufferMemoryBarrierCount = 1;
+    dependency.pBufferMemoryBarriers    = &buffer_barrier;
+    dependency.imageMemoryBarrierCount  = static_cast<uint32_t>(image_barriers.size());
+    dependency.pImageMemoryBarriers     = image_barriers.data();
+    auto command                        = m_scheduler->Current().Handle();
+    std::vector<vk::BufferImageCopy> sanitized_copies(copies.begin(), copies.end());
+    for (auto& c : sanitized_copies) {
+        if (c.bufferRowLength == 0) {
+            c.bufferRowLength = c.imageExtent.width;
+        }
+        if (c.bufferImageHeight == 0) {
+            c.bufferImageHeight = c.imageExtent.height;
+        }
+        const uint64_t expected_bytes = static_cast<uint64_t>(c.bufferRowLength) *
+                                        static_cast<uint64_t>(c.bufferImageHeight) *
+                                        static_cast<uint64_t>(info.bytes_per_block);
+        if (expected_bytes == 0) {
+            LOGF("Image::Download: suspicious zero-size copy region: extent=%ux%u pitch=%u bpb=%u
+",
+                 c.imageExtent.width, c.imageExtent.height, c.bufferRowLength, info.bytes_per_block);
+        }
+        if (c.bufferOffset + expected_bytes > size) {
+            LOGF("Image::Download: copy exceeds provided buffer size: offset=0x%016" PRIx64
+                 " need=0x%016" PRIx64 " provided=0x%016" PRIx64 "
+",
+                 c.bufferOffset, expected_bytes, size);
+        }
+    }
+    command.pipelineBarrier2(dependency);
+    command.copyImageToBuffer(backing.image, vk::ImageLayout::eTransferSrcOptimal, buffer,
+                              static_cast<uint32_t>(sanitized_copies.size()),
+                              sanitized_copies.data());
+    buffer_barrier.srcStageMask  = vk::PipelineStageFlagBits2::eCopy;
+    buffer_barrier.srcAccessMask = vk::AccessFlagBits2::eTransferWrite;
+    buffer_barrier.dstStageMask  = vk::PipelineStageFlagBits2::eAllCommands;
+    buffer_barrier.dstAccessMask =
+        vk::AccessFlagBits2::eMemoryRead | vk::AccessFlagBits2::eMemoryWrite;
+    dependency.imageMemoryBarrierCount = 0;
+    dependency.pImageMemoryBarriers    = nullptr;
+    command.pipelineBarrier2(dependency);
 }
 
 std::pair<uint32_t, uint32_t> Image::SanitizeCopyLayers(const Image& source,
+                                                        const Image& destination, uint32_t depth) {
                                                         const Image& destination, uint32_t depth) {
 	const auto source_type        = source.backing.image_type;
 	const auto destination_type   = destination.backing.image_type;
