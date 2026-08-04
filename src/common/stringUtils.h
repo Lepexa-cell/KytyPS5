@@ -4,6 +4,11 @@
 #include "common/byteBuffer.h"
 #include "common/common.h"
 
+// Suppress deprecated <codecvt> warnings on MSVC/clang-cl
+#if defined(_MSC_VER) && !defined(_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING)
+#define _SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING
+#endif
+
 #include <algorithm>
 #include <cctype>
 #include <charconv>
