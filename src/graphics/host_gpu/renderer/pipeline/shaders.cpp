@@ -65,12 +65,13 @@ static bool NarrowInputFormat(vk::Format& format, uint32_t& size, uint32_t used_
 			size = used_components;
 			return true;
 		case vk::Format::eR8G8B8A8Snorm:
-			if (used_components != 2) {
-				return false;
-			}
-			format = vk::Format::eR8G8Snorm;
-			size   = 2;
-			return true;
+    switch (used_components) {
+        case 1: format = vk::Format::eR8Snorm; break;
+        case 2: format = vk::Format::eR8G8Snorm; break;
+        default: return false;
+    }
+    size = used_components;
+    return true;
 		case vk::Format::eR8G8B8A8Uint:
 			switch (used_components) {
 				case 1: format = vk::Format::eR8Uint; break;
@@ -529,8 +530,8 @@ void CreatePipelineInternal(
 	                                                        frag_shader_stage_info};
 	const uint32_t                    shader_stage_count = ps_active ? 2u : 1u;
 
-	vk::VertexInputAttributeDescription input_attr[ShaderVertexInputInfo::RES_MAX];
-	vk::VertexInputBindingDescription   input_desc[ShaderVertexInputInfo::RES_MAX];
+	vk::VertexInputAttributeDescription input_attr[ShaderVertexInputInfo::RES_MAX] = {};
+    vk::VertexInputBindingDescription   input_desc[ShaderVertexInputInfo::RES_MAX] = {};
 
 	for (int bi = 0; bi < vs_input_info.buffers_num; bi++) {
 		const auto& b          = vs_input_info.buffers[bi];
