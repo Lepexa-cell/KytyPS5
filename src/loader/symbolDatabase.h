@@ -44,6 +44,7 @@ public:
 
 	[[nodiscard]] const SymbolRecord* Find(const SymbolResolve& s) const;
 	[[nodiscard]] const SymbolRecord* FindByNid(const std::string& nid, SymbolType type) const;
+	[[nodiscard]] const SymbolRecord* FindAnyByNid(const std::string& nid) const;
 	[[nodiscard]] const SymbolRecord* FindByName(const std::string& name, SymbolType type) const;
 
 	void DbgDump(const std::string& folder, const std::string& file_name);

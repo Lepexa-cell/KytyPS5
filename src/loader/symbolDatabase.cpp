@@ -78,6 +78,18 @@ const SymbolRecord* SymbolDatabase::FindByNid(const std::string& nid, SymbolType
 	return nullptr;
 }
 
+const SymbolRecord* SymbolDatabase::FindAnyByNid(const std::string& nid) const {
+	auto prefix = nid + "[";
+
+	for (const auto& symbol: m_symbols) {
+		if (Common::StartsWith(symbol.name, prefix)) {
+			return &symbol;
+		}
+	}
+
+	return nullptr;
+}
+
 const SymbolRecord* SymbolDatabase::FindByName(const std::string& name, SymbolType type) const {
 	auto prefix = name + "[";
 	auto suffix = fmt::format("[{}]", Common::EnumName(type).c_str());

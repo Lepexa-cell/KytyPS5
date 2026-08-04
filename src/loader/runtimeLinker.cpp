@@ -1794,7 +1794,11 @@ bool RuntimeLinker::ResolveLoadedSymbolByNid(const std::string& nid, SymbolType 
 
 	for (auto* p: m_programs) {
 		if (p != nullptr && p->export_symbols != nullptr) {
-			if (const auto* rec = p->export_symbols->FindByNid(nid, type); rec != nullptr) {
+			const SymbolRecord* rec = p->export_symbols->FindByNid(nid, type);
+			if (rec == nullptr) {
+				rec = p->export_symbols->FindAnyByNid(nid);
+			}
+			if (rec != nullptr) {
 				*out_info = *rec;
 				return true;
 			}
@@ -1802,7 +1806,11 @@ bool RuntimeLinker::ResolveLoadedSymbolByNid(const std::string& nid, SymbolType 
 	}
 
 	if (m_symbols != nullptr) {
-		if (const auto* rec = m_symbols->FindByNid(nid, type); rec != nullptr) {
+		const SymbolRecord* rec = m_symbols->FindByNid(nid, type);
+		if (rec == nullptr) {
+			rec = m_symbols->FindAnyByNid(nid);
+		}
+		if (rec != nullptr) {
 			*out_info = *rec;
 			return true;
 		}
