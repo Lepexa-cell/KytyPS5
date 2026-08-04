@@ -2920,24 +2920,24 @@ LIB_DEFINE(InitNet_1_NpUniversalDataSystem) {
 	LIB_FUNC("tpFJ8LIkVPw", LibNpUniversalDataSystem::NpUniversalDataSystemRegisterContext);
 	LIB_FUNC("s6W4Zl4SIgk", LibNpUniversalDataSystem::NpUniversalDataSystemCreateEventPropertyObject);
 	LIB_FUNC("kKUH0Viib3c", LibNpUniversalDataSystem::NpUniversalDataSystemDestroyEventPropertyObject);
-	LIB_FUNC("MFDb+4Nln64", LibNpUniversalDataSystem::NpUniversalDataSystemeEventPropertyObjectSetString);
-	LIB_FUNC("YE4Dbtbz60E", LibNpUniversalDataSystem::NpUniversalDataSystemeEventPropertyObjectSetInt32);
-	LIB_FUNC("AzD4irACKe4", LibNpUniversalDataSystem::NpUniversalDataSystemeEventPropertyObjectSetUInt32);
-	LIB_FUNC("kJLYH5uMAWI", LibNpUniversalDataSystem::NpUniversalDataSystemeEventPropertyObjectSetUInt32);
-	LIB_FUNC("56QLTqx911s", LibNpUniversalDataSystem::NpUniversalDataSystemeEventPropertyObjectSetInt64);
-	LIB_FUNC("xvsP5Yz6FmY", LibNpUniversalDataSystem::NpUniversalDataSystemeEventPropertyObjectSetUInt64);
-	LIB_FUNC("1bP1t4+QVcE", LibNpUniversalDataSystem::NpUniversalDataSystemeEventPropertyObjectSetFloat32);
-	LIB_FUNC("4Fu8tHW+u-k", LibNpUniversalDataSystem::NpUniversalDataSystemeEventPropertyObjectSetFloat64);
-	LIB_FUNC("Fidd8vWgyVE", LibNpUniversalDataSystem::NpUniversalDataSystemeEventPropertyObjectSetBool);
-	LIB_FUNC("wAcxBDLHj1M", LibNpUniversalDataSystem::NpUniversalDataSystemeEventPropertyObjectSetBinary);
-	LIB_FUNC("74ASEqxSnkM", LibNpUniversalDataSystem::NpUniversalDataSystemeEventPropertyObjectSetObject);
-	LIB_FUNC("Wxbg5x3pTXA", LibNpUniversalDataSystem::NpUniversalDataSystemeEventPropertyObjectSetArray);
+	LIB_FUNC("MFDb+4Nln64", LibNpUniversalDataSystem::NpUniversalDataSystemEventPropertyObjectSetString);
+	LIB_FUNC("YE4Dbtbz60E", LibNpUniversalDataSystem::NpUniversalDataSystemEventPropertyObjectSetInt32);
+	LIB_FUNC("AzD4irACKe4", LibNpUniversalDataSystem::NpUniversalDataSystemEventPropertyObjectSetUInt32);
+	LIB_FUNC("kJLYH5uMAWI", LibNpUniversalDataSystem::NpUniversalDataSystemEventPropertyObjectSetUInt32);
+	LIB_FUNC("56QLTqx911s", LibNpUniversalDataSystem::NpUniversalDataSystemEventPropertyObjectSetInt64);
+	LIB_FUNC("xvsP5Yz6FmY", LibNpUniversalDataSystem::NpUniversalDataSystemEventPropertyObjectSetUInt64);
+	LIB_FUNC("1bP1t4+QVcE", LibNpUniversalDataSystem::NpUniversalDataSystemEventPropertyObjectSetFloat32);
+	LIB_FUNC("4Fu8tHW+u-k", LibNpUniversalDataSystem::NpUniversalDataSystemEventPropertyObjectSetFloat64);
+	LIB_FUNC("Fidd8vWgyVE", LibNpUniversalDataSystem::NpUniversalDataSystemEventPropertyObjectSetBool);
+	LIB_FUNC("wAcxBDLHj1M", LibNpUniversalDataSystem::NpUniversalDataSystemEventPropertyObjectSetBinary);
+	LIB_FUNC("74ASEqxSnkM", LibNpUniversalDataSystem::NpUniversalDataSystemEventPropertyObjectSetObject);
+	LIB_FUNC("Wxbg5x3pTXA", LibNpUniversalDataSystem::NpUniversalDataSystemEventPropertyObjectSetArray);
 	LIB_FUNC("Hm7qubT3b70", LibNpUniversalDataSystem::NpUniversalDataSystemCreateEventPropertyArray);
 	LIB_FUNC("W-0xwY0ZMjW", LibNpUniversalDataSystem::NpUniversalDataSystemDestroyEventPropertyArray);
-	LIB_FUNC("41lLk7YJRTE", LibNpUniversalDataSystem::NpUniversalDataSystemeEventPropertyArraySetString);
-	LIB_FUNC("BypQUf113-k", LibNpUniversalDataSystem::NpUniversalDataSystemeEventPropertyArraySetInt32);
-	LIB_FUNC("yMi0xAOpmXM", LibNpUniversalDataSystem::NpUniversalDataSystemeEventPropertyArraySetUInt32);
-	LIB_FUNC("viVXAWMmYrY", LibNpUniversalDataSystem::NpUniversalDataSystemeEventPropertyArraySetInt64);
+	LIB_FUNC("41lLk7YJRTE", LibNpUniversalDataSystem::NpUniversalDataSystemEventPropertyArraySetString);
+	LIB_FUNC("BypQUf113-k", LibNpUniversalDataSystem::NpUniversalDataSystemEventPropertyArraySetInt32);
+	LIB_FUNC("yMi0xAOpmXM", LibNpUniversalDataSystem::NpUniversalDataSystemEventPropertyArraySetUInt32);
+	LIB_FUNC("viVXAWMmYrY", LibNpUniversalDataSystem::NpUniversalDataSystemEventPropertyArraySetInt64);
 }
 
 } // namespace LibNpUniversalDataSystem
