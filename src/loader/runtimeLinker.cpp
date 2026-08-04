@@ -1362,6 +1362,13 @@ static void PatchProgram(Program* program, uint64_t address, uint64_t size) {
 				}
 			}
 		}
+        const uint8_t fs_load_pattern[9] = {0x64, 0x48, 0x8B, 0x04, 0x25, 0x28, 0x00, 0x00, 0x00};
+        for (auto* ptr = start_ptr; ptr <= start_ptr + size - 9; ptr++) {
+            if (std::memcmp(ptr, fs_load_pattern, 9) == 0) {
+                LOGF("Patching secondary fs:[0x28] load at addr: [%016" PRIX64 "]\n", reinterpret_cast<uint64_t>(ptr));
+                std::memset(ptr, 0x90, 9); 
+            }
+        }
 	}
 
 	if (!program->elf->IsShared() && program->tls.handler_vaddr != 0) {
