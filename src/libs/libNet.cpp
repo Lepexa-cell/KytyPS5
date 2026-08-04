@@ -217,8 +217,8 @@ LIB_DEFINE(InitNet_1_Net) {
 }
 LIB_DEFINE(InitNet_1_1_Net) {
     LIB_FUNC("AzqoBha7js4", LibNet::NetGenericStub);
-    LIB_FUNC("kJLYH5uMAWI", LibNet::NetGenericStub);
 	LIB_FUNC("hoOAofhhRvE", LibNet::NetGenericStub);
+	LIB_FUNC("kJLYH5uMAWI", LibNpUniversalDataSystem::NpUniversalDataSystemEventPropertyObjectSetUInt32);
 }
 } // namespace LibNet
 
