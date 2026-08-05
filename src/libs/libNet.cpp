@@ -1488,6 +1488,28 @@ LIB_DEFINE(InitNet_1_NpSessionSignaling) {
 
 } // namespace LibNpSessionSignaling
 
+namespace LibNpPartner001 {
+
+LIB_VERSION("NpPartner001", 1, "NpPartner001", 1, 1);
+
+static int KYTY_SYSV_ABI NpPartner001Dummy(uint64_t arg0, uint64_t arg1, uint64_t arg2,
+                                           uint64_t arg3) {
+	PRINT_NAME();
+
+	(void)arg0;
+	(void)arg1;
+	(void)arg2;
+	(void)arg3;
+
+	return 0;
+}
+
+LIB_DEFINE(InitNet_1_NpPartner001) {
+	LIB_FUNC("7CxI50-xlCk", LibNpPartner001::NpPartner001Dummy);
+}
+
+} // namespace LibNpPartner001
+
 namespace LibNpEntitlementAccess {
 
 LIB_VERSION("NpEntitlementAccess", 1, "NpEntitlementAccess", 1, 1);
@@ -1610,6 +1632,28 @@ LIB_DEFINE(InitNet_1_NpEntitlementAccess) {
 }
 
 } // namespace LibNpEntitlementAccess
+
+namespace LibNpEntitlementAccessPft {
+
+LIB_VERSION("NpEntitlementAccessPft", 1, "NpEntitlementAccess", 1, 1);
+
+static int KYTY_SYSV_ABI NpEntitlementAccessPftDummy(uint64_t arg0, uint64_t arg1, uint64_t arg2,
+                                                     uint64_t arg3) {
+	PRINT_NAME();
+
+	(void)arg0;
+	(void)arg1;
+	(void)arg2;
+	(void)arg3;
+
+	return 0;
+}
+
+LIB_DEFINE(InitNet_1_NpEntitlementAccessPft) {
+	LIB_FUNC("eDXKe9FndlE", LibNpEntitlementAccessPft::NpEntitlementAccessPftDummy);
+}
+
+} // namespace LibNpEntitlementAccessPft
 
 namespace LibNpAuth {
 
@@ -4006,7 +4050,9 @@ LIB_DEFINE(InitNet_1) {
 	LibNpManager::InitNet_1_NpManager(s);
 	LibNpManager::InitNet_1_1_NpManager(s);
 	LibNpSessionSignaling::InitNet_1_NpSessionSignaling(s);
+	LibNpPartner001::InitNet_1_NpPartner001(s);
 	LibNpEntitlementAccess::InitNet_1_NpEntitlementAccess(s);
+	LibNpEntitlementAccessPft::InitNet_1_NpEntitlementAccessPft(s);
 	LibNpAuth::InitNet_1_NpAuth(s);
 	LibNpTrophy2::InitNet_1_NpTrophy2(s);
 	LibNpUniversalDataSystem::InitNet_1_NpUniversalDataSystem(s);
