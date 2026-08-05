@@ -188,7 +188,7 @@ LIB_DEFINE(InitNet_1_Net) {
 	LIB_FUNC("Nlev7Lg8k3A", LibNet::NetInit);
 	LIB_FUNC("HQOwnfMGipQ", LibNet::GetNetErrorAddr);
 	LIB_FUNC("AzqobBha7js4", LibNet::NetGenericStub);
-    LIB_FUNC("kJLYH5uMAWI", LibNet::NetGenericStub);
+    LIB_FUNC("kJlYH5uMAWI", LibNet::NetGenericStub);
     LIB_FUNC("hoOAofhhRvE", LibNet::NetGenericStub); 
     LIB_FUNC("pQGpHYopAIY", LibNet::NetNtohl);
     LIB_FUNC("Rbvt+5Y2iEw", LibNet::NetNtohs);
@@ -4031,6 +4031,28 @@ LIB_DEFINE(InitPlatform_1_SharePlay) {
 
 } // namespace LibSharePlay
 
+namespace LibConvertKeycode {
+
+LIB_VERSION("ConvertKeycode", 1, "ConvertKeycode", 1, 0);
+
+static int KYTY_SYSV_ABI ConvertKeycodeDummy(uint64_t arg0, uint64_t arg1, uint64_t arg2,
+                                             uint64_t arg3) {
+	PRINT_NAME();
+
+	(void)arg0;
+	(void)arg1;
+	(void)arg2;
+	(void)arg3;
+
+	return 0;
+}
+
+LIB_DEFINE(InitPlatform_1_ConvertKeycode) {
+	LIB_FUNC("mUuUOWI-C+0", LibConvertKeycode::ConvertKeycodeDummy);
+}
+
+} // namespace LibConvertKeycode
+
 LIB_DEFINE(InitPlatform_1) {
 	LibRandom::InitPlatform_1_Random(s);
 	LibIme::InitPlatform_1_Ime(s);
@@ -4038,6 +4060,7 @@ LIB_DEFINE(InitPlatform_1) {
 	LibWebBrowserDialog::InitPlatform_1_WebBrowserDialog(s);
 	LibGameLiveStreaming::InitPlatform_1_GameLiveStreaming(s);
 	LibSharePlay::InitPlatform_1_SharePlay(s);
+	LibConvertKeycode::InitPlatform_1_ConvertKeycode(s);
 }
 
 LIB_DEFINE(InitNet_1) {

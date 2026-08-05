@@ -3400,6 +3400,7 @@ LIB_DEFINE(InitLibKernel_1) {
 	LIB_FUNC("zE-wXIZjLoM", LibKernel::KernelDebugRaiseExceptionOnReleaseMode);
 	LIB_FUNC("Hc4CaR6JBL0", Posix::KernelSyncOnAddressV1);
 	LIB_FUNC("q2y-wDIVWZA", Posix::KernelSyncOnAddressV1);
+	LIB_FUNC("WlyEA-sLDf0", WriteThrottlingStub);
 
 	AddLibkernelUnityFunc(s, "Qhv5ARAoOEc",
 	                      reinterpret_cast<uint64_t>(LibKernel::KernelRemoveExceptionHandler),
