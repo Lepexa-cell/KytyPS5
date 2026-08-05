@@ -849,7 +849,7 @@ bool RenderExecutor::PrepareDrawRenderState(uint64_t submit_id, RenderCommandBuf
 	return true;
 }
 
-static void RefreshShaders(RenderCommandBuffer& buffer, const DrawCallInfo& draw, bool log_phases,
+static bool RefreshShaders(RenderCommandBuffer& buffer, const DrawCallInfo& draw, bool log_phases,
                            DrawRenderState& state) {
 	EXIT_IF(draw.name == nullptr);
 	auto& ctx    = buffer.GetRegisters();
@@ -865,11 +865,11 @@ static void RefreshShaders(RenderCommandBuffer& buffer, const DrawCallInfo& draw
 	std::array<Prospero::ColorComponentMapping, RENDER_COLOR_ATTACHMENTS_MAX>
 	    target_export_mapping {};
 	for (uint32_t i = 0; i < state.color_count; i++) {
-        const auto slot = state.color_info[i].target_slot;
-        if (slot < RENDER_COLOR_ATTACHMENTS_MAX) {
-            target_export_mapping[slot] = state.color_info[i].export_mapping;
-        }
-    }
+		const auto slot = state.color_info[i].target_slot;
+		if (slot < RENDER_COLOR_ATTACHMENTS_MAX) {
+			target_export_mapping[slot] = state.color_info[i].export_mapping;
+		}
+	}
 	const auto lane_mask_mode = SelectGraphicsLaneMaskMode(64u);
 
 	if (log_phases) {
@@ -877,19 +877,26 @@ static void RefreshShaders(RenderCommandBuffer& buffer, const DrawCallInfo& draw
 	}
 	if (!ShaderCompileInfoVS(vertex_shader_info, shader_regs, lane_mask_mode, state.vs_input_info,
 	                         state.vs_shader)) {
-		EXIT("ShaderCompileInfoVS failed for draw %s\n", draw.name);
+		if (graphics_debug_dump_enabled()) {
+			LOGF("ShaderCompileInfoVS failed for draw %s, skipping draw\n", draw.name);
+		}
+		return false;
 	}
 
 	if (!state.ps_active) {
-		return;
+		return true;
 	}
 	if (log_phases) {
 		LogDrawPhase(draw.name, "ShaderCompileInfoPS");
 	}
 	if (!ShaderCompileInfoPS(pixel_shader_info, shader_regs, lane_mask_mode, state.vs_input_info,
 	                         target_export_mapping, state.ps_input_info, state.ps_shader)) {
-		EXIT("ShaderCompileInfoPS failed for draw %s\n", draw.name);
+		if (graphics_debug_dump_enabled()) {
+			LOGF("ShaderCompileInfoPS failed for draw %s, skipping draw\n", draw.name);
+		}
+		return false;
 	}
+	return true;
 }
 
 static std::vector<BufferBinding> PrepareVertexBuffers(uint64_t                     submit_id,
@@ -1264,7 +1271,10 @@ void RenderExecutor::DrawIndex(uint64_t submit_id, RenderCommandBuffer& buffer,
 		return;
 	}
 
-	RefreshShaders(buffer, draw, true, state);
+	if (!RefreshShaders(buffer, draw, true, state)) {
+		ResetBindings();
+		return;
+	}
 
 	LogDrawStateIfNeeded(buffer, draw, state, true, false, index_type_and_size, index_addr);
 
@@ -1359,7 +1369,10 @@ void RenderExecutor::DrawAuto(uint64_t submit_id, RenderCommandBuffer& buffer, u
 	    (use_ngg_rectlist_draw &&
 	     ucfg.GetPrimType() == Prospero::GpuEnumValue(Prospero::PrimitiveType::kRectList));
 
-	RefreshShaders(buffer, draw, false, state);
+	if (!RefreshShaders(buffer, draw, false, state)) {
+		ResetBindings();
+		return;
+	}
 
 	if (draw_prim7_as_ngg && state.vs_input_info.buffers_num == 0 &&
 	    state.vs_input_info.param_export_mask == 0 && state.ps_input_info.input_num != 0) {
